@@ -20,6 +20,9 @@ pub mod policy_verifier;
 pub mod ltl_checker;
 pub mod errors;
 
+#[cfg(target_arch = "wasm32")]
+pub mod wasm;
+
 pub use behavioral::{BehavioralAnalyzer, BehaviorProfile, AnomalyScore};
 pub use policy_verifier::{PolicyVerifier, SecurityPolicy, VerificationResult};
 pub use ltl_checker::{LTLChecker, LTLFormula, Trace};

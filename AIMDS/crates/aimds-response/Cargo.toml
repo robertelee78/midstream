@@ -8,10 +8,10 @@ license = "MIT OR Apache-2.0"
 
 [dependencies]
 # Workspace dependencies
-midstreamer-strange-loop = { path = "../../../crates/strange-loop" }
-aimds-core = { path = "../aimds-core" }
-aimds-detection = { path = "../aimds-detection" }
-aimds-analysis = { path = "../aimds-analysis" }
+midstreamer-strange-loop = { version = "0.1.0", path = "../../../crates/strange-loop" }
+aimds-core = { version = "0.1.0", path = "../aimds-core" }
+aimds-detection = { version = "0.1.0", path = "../aimds-detection" }
+aimds-analysis = { version = "0.1.0", path = "../aimds-analysis" }
 
 # Async runtime
 tokio = { version = "1.41", features = ["full"] }
@@ -44,6 +44,13 @@ uuid = { version = "1.11", features = ["v4", "serde"] }
 async-trait = "0.1"
 futures = "0.3"
 
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+js-sys = "0.3"
+console_error_panic_hook = "0.1"
+serde-wasm-bindgen = "0.6"
+
 [dev-dependencies]
 criterion = { version = "0.5", features = ["async_tokio", "html_reports"] }
 tokio-test = "0.4"
@@ -53,6 +60,7 @@ tempfile = "3.14"
 [lib]
 name = "aimds_response"
 path = "src/lib.rs"
+crate-type = ["cdylib", "rlib"]
 
 [[bench]]
 name = "meta_learning_bench"

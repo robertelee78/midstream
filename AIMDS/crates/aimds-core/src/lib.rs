@@ -7,6 +7,9 @@ pub mod config;
 pub mod error;
 pub mod types;
 
+#[cfg(target_arch = "wasm32")]
+pub mod wasm;
+
 pub use config::AimdsConfig;
 pub use error::{AimdsError, Result};
 pub use types::*;

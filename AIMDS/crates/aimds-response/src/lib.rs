@@ -37,6 +37,9 @@ pub mod audit;
 pub mod rollback;
 pub mod error;
 
+#[cfg(target_arch = "wasm32")]
+pub mod wasm;
+
 use std::sync::Arc;
 use tokio::sync::RwLock;
 use crate::meta_learning::ThreatIncident;
