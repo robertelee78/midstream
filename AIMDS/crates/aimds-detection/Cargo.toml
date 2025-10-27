@@ -31,7 +31,17 @@ aho-corasick = "1.1"
 fancy-regex = "0.13"
 lru = "0.12"
 
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+js-sys = "0.3"
+console_error_panic_hook = "0.1"
+serde-wasm-bindgen = "0.6"
+
 [dev-dependencies]
 criterion.workspace = true
 proptest.workspace = true
 tokio = { workspace = true, features = ["test-util"] }
+
+[lib]
+crate-type = ["cdylib", "rlib"]

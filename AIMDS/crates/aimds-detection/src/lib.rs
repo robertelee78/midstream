@@ -7,6 +7,9 @@ pub mod pattern_matcher;
 pub mod sanitizer;
 pub mod scheduler;
 
+#[cfg(target_arch = "wasm32")]
+pub mod wasm;
+
 pub use pattern_matcher::PatternMatcher;
 pub use sanitizer::{Sanitizer, PiiMatch, PiiType};
 pub use scheduler::{DetectionScheduler, ThreatPriority};
