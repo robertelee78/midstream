@@ -1,0 +1,51 @@
+# AIMDS Default Configuration
+
+version: "0.1"
+
+detection:
+  threshold: 0.8
+  mode: balanced
+  pii_detection: true
+  patterns: ./patterns/
+
+analysis:
+  baseline: ./baselines/
+  sensitivity: medium
+  window: 5m
+  anomaly_threshold: 0.7
+  learning: true
+
+verification:
+  method: ltl
+  timeout: 30
+  parallel: true
+  policies: ./policies/
+
+response:
+  strategy: balanced
+  auto_respond: false
+  rollback: true
+  learning: true
+
+integrations:
+  agentdb:
+    enabled: false
+    endpoint: http://localhost:8000
+
+  prometheus:
+    enabled: false
+    port: 9090
+
+  lean:
+    enabled: false
+    endpoint: http://localhost:3000
+
+performance:
+  workers: auto
+  max_memory_mb: 512
+  batch_size: 10
+
+logging:
+  level: info
+  file: ./logs/aimds.log
+  format: json

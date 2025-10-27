@@ -1,0 +1,56 @@
+[package]
+name = "aimds-npm"
+version = "0.1.0"
+edition = "2021"
+authors = ["rUv <contact@ruv.io>"]
+description = "AIMDS npm package with WASM bindings"
+license = "MIT"
+repository = "https://github.com/ruvnet/midstream"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+# AIMDS crates from workspace
+aimds-core = { path = "../AIMDS/crates/aimds-core" }
+aimds-detection = { path = "../AIMDS/crates/aimds-detection" }
+aimds-analysis = { path = "../AIMDS/crates/aimds-analysis" }
+aimds-verification = { path = "../AIMDS/crates/aimds-verification" }
+aimds-response = { path = "../AIMDS/crates/aimds-response" }
+
+# WASM bindings
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+js-sys = "0.3"
+web-sys = { version = "0.3", features = ["console"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde-wasm-bindgen = "0.6"
+
+# Async runtime
+tokio = { version = "1.35", features = ["sync", "rt"], default-features = false }
+
+# Error handling
+thiserror = "1.0"
+anyhow = "1.0"
+
+# Logging
+console_error_panic_hook = "0.1"
+tracing = "0.1"
+tracing-wasm = "0.2"
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+
+[profile.release.package."*"]
+opt-level = 3
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = ["-Oz", "--enable-mutable-globals"]

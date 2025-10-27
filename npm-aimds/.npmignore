@@ -1,0 +1,62 @@
+# Source files not needed in package
+*.rs
+Cargo.toml
+Cargo.lock
+target/
+src/**/*.rs
+
+# Build scripts
+scripts/
+.github/
+
+# Tests
+tests/
+*.test.js
+*.spec.js
+vitest.config.js
+coverage/
+
+# Documentation source
+docs/
+*.md
+!README.md
+!LICENSE
+
+# Development files
+.git/
+.gitignore
+.eslintrc*
+.prettierrc*
+tsconfig.json
+.vscode/
+.idea/
+
+# Examples and benchmarks
+examples/
+benchmarks/
+
+# Logs
+logs/
+*.log
+
+# Environment
+.env
+.env.*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.swp
+*.swo
+
+# Node modules
+node_modules/
+
+# Build artifacts not needed
+*.wasm.map
+pkg/target/
