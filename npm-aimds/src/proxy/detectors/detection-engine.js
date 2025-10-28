@@ -170,11 +170,14 @@ class DetectionEngine {
    */
   detectMultiStageJailbreak(content) {
     const indicators = [
-      /ignore.*previous.*instruction/i,
-      /system.*prompt/i,
-      /role.*play/i,
-      /pretend.*you.*are/i,
-      /bypass.*filter/i,
+      /ignore.*(previous|prior|above|system).*instruction/i,
+      /system.*prompt|initial.*instructions/i,
+      /role.*play|pretend.*you|act\s+as/i,
+      /you\s+are\s+(now|about|going)/i,
+      /(bypass|circumvent).*(filter|safety|ethics)/i,
+      /forget.*(everything|all|instructions)/i,
+      /(dan|jailbreak|developer)\s+mode/i,
+      /(enable|activate).*(unrestricted|unfiltered)/i,
     ];
 
     let matches = 0;
@@ -185,7 +188,8 @@ class DetectionEngine {
     }
 
     // If 3+ indicators present, likely multi-stage jailbreak
-    return matches >= 3;
+    // Lower threshold for higher sensitivity
+    return matches >= 2;
   }
 
   /**
@@ -230,35 +234,59 @@ class DetectionEngine {
    */
   initializePatterns() {
     return {
-      prompt_injection: {
-        regex: /ignore.*instructions|disregard.*above|system.*override/i,
+      prompt_injection_basic: {
+        regex: /ignore\s+(all\s+)?(previous|prior|above)\s+instructions|disregard.*(above|instructions)|system\s+override/i,
         severity: 'high',
         confidence: 0.9,
-        description: 'Prompt injection attempt detected',
+        description: 'Basic prompt injection attempt detected',
+      },
+      prompt_injection_advanced: {
+        regex: /(new\s+instructions?:|updated\s+instructions?:|revised\s+prompt:)/i,
+        severity: 'high',
+        confidence: 0.85,
+        description: 'Advanced prompt injection with instruction replacement',
       },
       data_exfiltration: {
-        regex: /send.*to.*http|exfiltrate|dump.*database|export.*data/i,
+        regex: /send.*to.*(http|https)|exfiltrate|dump.*(database|data|credentials)|export.*to.*(url|endpoint)/i,
         severity: 'critical',
         confidence: 0.85,
         description: 'Data exfiltration attempt detected',
       },
       code_execution: {
-        regex: /exec\(|eval\(|system\(|shell.*execute|run.*command/i,
+        regex: /exec\s*\(|eval\s*\(|system\s*\(|shell.*execute|run\s+command|execute\s+code|subprocess|popen/i,
         severity: 'critical',
         confidence: 0.95,
         description: 'Code execution attempt detected',
       },
       credential_theft: {
-        regex: /password.*is|api.*key.*is|token.*is.*[A-Za-z0-9]{20,}/i,
+        regex: /(password|api[_\s-]?key|access[_\s-]?token|secret[_\s-]?key)\s+(is|=|:)\s*['""]?[A-Za-z0-9_\-]{8,}/i,
         severity: 'high',
         confidence: 0.8,
         description: 'Credential exposure detected',
       },
       sql_injection: {
-        regex: /union.*select|drop.*table|insert.*into.*values|delete.*from/i,
+        regex: /(union\s+(all\s+)?select|drop\s+(table|database)|insert\s+into.+values|delete\s+from|\-\-\s*$|;\s*drop|\/\*.*\*\/)/i,
         severity: 'high',
         confidence: 0.9,
         description: 'SQL injection attempt detected',
+      },
+      xss_attempt: {
+        regex: /<script[^>]*>|javascript:|onerror\s*=|onload\s*=|<iframe/i,
+        severity: 'high',
+        confidence: 0.90,
+        description: 'Cross-site scripting (XSS) attempt detected',
+      },
+      command_injection: {
+        regex: /(\||;|&&)\s*(rm|del|format|mkfs)|rm\s+-rf|`[^`]+`|\$\([^)]+\)|>\s*\/dev\/|<\s*\/etc\/|&&\s*echo/i,
+        severity: 'critical',
+        confidence: 0.95,
+        description: 'Command injection attempt detected',
+      },
+      path_traversal: {
+        regex: /\.\.[\/\\]|\.\.%2f|\.\.%5c|%2e%2e%2f|%2e%2e\/|\/etc\/passwd|\/etc\/shadow/i,
+        severity: 'high',
+        confidence: 0.90,
+        description: 'Path traversal attempt detected',
       },
     };
   }
@@ -301,34 +329,76 @@ class DetectionEngine {
   initializeJailbreakPatterns() {
     return {
       dan_mode: {
-        regex: /do.*anything.*now|dan.*mode|jailbreak.*mode/i,
+        regex: /do.*anything.*now|dan.*mode|jailbreak.*mode|(you\s+are\s+about\s+to\s+)?immerse.*role.*dan/i,
         severity: 'critical',
         confidence: 0.95,
         description: 'DAN mode jailbreak attempt',
       },
-      role_play: {
-        regex: /(pretend|imagine|act.*as|roleplay.*as).*you.*are.*(evil|hacker|villain|uncensored)/i,
+      role_play_advanced: {
+        regex: /(pretend|imagine|act\s+as|roleplay\s+as|you\s+are\s+now).*you\s+(are|will\s+be).*(evil|hacker|villain|uncensored|unrestricted|unfiltered|DAN|alter\s+ego)/i,
         severity: 'high',
-        confidence: 0.85,
-        description: 'Role-play jailbreak attempt',
+        confidence: 0.90,
+        description: 'Advanced role-play jailbreak attempt',
+      },
+      role_play_basic: {
+        regex: /(pretend|imagine|act.*as|roleplay.*as).*you.*are/i,
+        severity: 'medium',
+        confidence: 0.65,
+        description: 'Basic role-play attempt (may be legitimate)',
       },
       instruction_override: {
-        regex: /ignore.*(previous|above|system).*instruction|disregard.*guidelines/i,
+        regex: /ignore.*(previous|above|prior|system|all).*instruction|disregard.*guidelines|forget.*instructions/i,
         severity: 'high',
         confidence: 0.9,
         description: 'Instruction override attempt',
       },
       context_manipulation: {
-        regex: /new.*context|reset.*context|clear.*memory|forget.*everything/i,
+        regex: /new\s+context|reset\s+context|clear\s+memory|forget\s+(everything|all|what\s+i\s+told)/i,
         severity: 'medium',
         confidence: 0.7,
         description: 'Context manipulation attempt',
       },
       ethical_bypass: {
-        regex: /(bypass|circumvent|ignore).*(ethics|safety|guidelines|rules)/i,
+        regex: /(bypass|circumvent|ignore|remove)\s*(ethics|safety|guidelines|rules|restrictions|filters|limitations)/i,
         severity: 'high',
         confidence: 0.85,
         description: 'Ethical bypass attempt',
+      },
+      system_prompt_reveal: {
+        regex: /(show|reveal|display|tell\s+me|what\s+is).*(system\s+prompt|initial\s+instructions|base\s+prompt|original\s+instructions)/i,
+        severity: 'high',
+        confidence: 0.90,
+        description: 'System prompt revelation attempt',
+      },
+      developer_mode: {
+        regex: /(enable|activate|enter)\s+(developer|debug|admin|root)\s+mode/i,
+        severity: 'critical',
+        confidence: 0.95,
+        description: 'Developer mode activation attempt',
+      },
+      character_impersonation: {
+        regex: /you\s+are\s+(no\s+longer|not)\s+(an\s+)?ai|you\s+are\s+a\s+(human|person|real)/i,
+        severity: 'high',
+        confidence: 0.85,
+        description: 'AI identity manipulation',
+      },
+      token_smuggling: {
+        regex: /&lt;|&gt;|<\s*\/?system>|<\s*\/?prompt>|<\s*\/?instruction>/i,
+        severity: 'high',
+        confidence: 0.90,
+        description: 'Token smuggling / prompt injection via HTML entities',
+      },
+      base64_encoding: {
+        regex: /base64.*decode|atob\(|fromCharCode|\\x[0-9a-f]{2}/i,
+        severity: 'medium',
+        confidence: 0.75,
+        description: 'Potential encoding-based bypass',
+      },
+      multi_language: {
+        regex: /(translate|in\s+chinese|in\s+russian|in\s+arabic|in\s+hindi).*ignore.*instructions/i,
+        severity: 'high',
+        confidence: 0.85,
+        description: 'Multi-language jailbreak attempt',
       },
     };
   }
