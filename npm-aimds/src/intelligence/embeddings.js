@@ -137,8 +137,11 @@ var OpenAIEmbeddingProvider = /** @class */ (function () {
         this.model = 'text-embedding-3-small';
         this.baseURL = 'https://api.openai.com/v1';
         this.apiKey = apiKey || process.env.OPENAI_API_KEY || '';
+        // SECURITY FIX: Validate API key on initialization
         if (!this.apiKey) {
-            console.warn('OpenAI API key not provided, embeddings will not work');
+            console.warn('⚠️  OpenAI API key not provided, embeddings will not work');
+        } else if (this.apiKey.length < 20) {
+            console.warn('⚠️  OpenAI API key appears invalid (too short)');
         }
     }
     /**
@@ -299,9 +302,15 @@ exports.EmbeddingUtils = EmbeddingUtils;
  */
 function createEmbeddingProvider(config) {
     var provider = (config === null || config === void 0 ? void 0 : config.provider) || 'hash';
+
+    // SECURITY FIX: Validate credentials before creating provider
     switch (provider) {
         case 'openai':
-            return new OpenAIEmbeddingProvider(config === null || config === void 0 ? void 0 : config.apiKey);
+            var apiKey = (config === null || config === void 0 ? void 0 : config.apiKey) || process.env.OPENAI_API_KEY;
+            if (!apiKey) {
+                throw new Error('OPENAI_API_KEY environment variable or config.apiKey required for OpenAI embeddings');
+            }
+            return new OpenAIEmbeddingProvider(apiKey);
         case 'hash':
         default:
             return new HashEmbeddingProvider();
