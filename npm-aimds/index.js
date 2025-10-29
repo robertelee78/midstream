@@ -47,6 +47,30 @@ module.exports = {
   // Utilities
   utils: require('./src/utils'),
 
+  // Intelligence Module (Week 1: AgentDB Foundation)
+  intelligence: (() => {
+    try {
+      const intel = require('./dist/intelligence');
+      return {
+        // Vector Store
+        ThreatVectorStore: intel.ThreatVectorStore,
+        createVectorStore: intel.createVectorStore,
+
+        // Embeddings
+        createEmbeddingProvider: intel.createEmbeddingProvider,
+        HashEmbeddingProvider: intel.HashEmbeddingProvider,
+        OpenAIEmbeddingProvider: intel.OpenAIEmbeddingProvider,
+        EmbeddingUtils: intel.EmbeddingUtils,
+
+        // All exports
+        ...intel
+      };
+    } catch (error) {
+      console.warn('Intelligence module not compiled yet. Run: cd src/intelligence && npx tsc');
+      return {};
+    }
+  })(),
+
   // Version
   version: require('./package.json').version,
 };

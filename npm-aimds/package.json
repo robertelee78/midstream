@@ -49,7 +49,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "echo 'Tests will run in next release'",
+    "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "benchmark": "node benchmarks/detection-bench.js",
@@ -84,7 +84,7 @@
     "vitest": "^4.0.5"
   },
   "optionalDependencies": {
-    "agentdb": "^2.0.0",
+    "agentdb": "^1.6.1",
     "lean-client": "^1.0.0"
   },
   "engines": {
