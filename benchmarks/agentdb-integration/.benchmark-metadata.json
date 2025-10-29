@@ -1,0 +1,34 @@
+{
+  "benchmark_suite": {
+    "name": "AgentDB + Midstreamer Integration Benchmarks",
+    "version": "1.0.0",
+    "created": "2025-10-27T20:22:00Z",
+    "agent": "Performance Bottleneck Analyzer",
+    "status": "COMPLETE"
+  },
+  "statistics": {
+    "total_files": 13,
+    "typescript_lines": 3296,
+    "documentation_lines": 1200,
+    "total_lines": 4496,
+    "benchmark_suites": 6,
+    "individual_tests": 71,
+    "target_metrics": 7
+  },
+  "target_metrics_coverage": {
+    "embedding_generation": {"target": "<10ms", "covered": true, "tests": 20},
+    "storage_latency": {"target": "<10ms async", "covered": true, "tests": 5},
+    "search_latency": {"target": "<15ms @ 10K", "covered": true, "tests": 6},
+    "end_to_end_latency": {"target": "<100ms", "covered": true, "tests": 8},
+    "throughput": {"target": "10K events/sec", "covered": true, "tests": 10},
+    "rl_convergence": {"target": "<500 episodes", "covered": true, "tests": 10},
+    "memory_usage": {"target": "<2GB w/ quant", "covered": true, "tests": 12}
+  },
+  "quick_reference": {
+    "location": "/workspaces/midstream/benchmarks/agentdb-integration/",
+    "main_docs": "README.md",
+    "optimization_guide": "OPTIMIZATION_GUIDE.md",
+    "summary": "BENCHMARK_SUMMARY.md",
+    "runner": "run-all-benchmarks.ts"
+  }
+}

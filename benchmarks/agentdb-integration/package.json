@@ -1,0 +1,33 @@
+{
+  "name": "agentdb-midstream-benchmarks",
+  "version": "1.0.0",
+  "description": "Comprehensive performance benchmarks for AgentDB + Midstreamer integration",
+  "main": "run-all-benchmarks.ts",
+  "scripts": {
+    "bench:all": "ts-node run-all-benchmarks.ts",
+    "bench:embedding": "ts-node embedding-performance.bench.ts",
+    "bench:rl": "ts-node rl-performance.bench.ts",
+    "bench:streaming": "ts-node streaming-pipeline.bench.ts",
+    "bench:memory": "ts-node memory-profiling.bench.ts",
+    "bench:baseline": "ts-node baseline-comparison.bench.ts",
+    "test:regression": "ts-node regression-tests.bench.ts",
+    "report": "cat results/MASTER-REPORT.md",
+    "clean": "rm -rf results/*"
+  },
+  "keywords": [
+    "benchmark",
+    "performance",
+    "agentdb",
+    "midstream",
+    "rl",
+    "embedding",
+    "vector-database"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.0.0"
+  }
+}

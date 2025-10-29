@@ -1,6 +1,6 @@
 {
   "name": "aidefense",
-  "version": "0.1.0",
+  "version": "0.1.7",
   "description": "AI Defense - Real-time AI security with detection, analysis, verification, and adaptive response (American English wrapper for aidefence)",
   "keywords": [
     "ai",
@@ -37,7 +37,7 @@
     "postinstall": "echo '\n✅ AI Defense installed successfully!\n\n📦 This is an American English wrapper for the aidefence package.\n🔗 All functionality is provided by: aidefence@latest\n\nUsage: npx aidefense --help\n'"
   },
   "dependencies": {
-    "aidefence": "^0.1.1"
+    "aidefence": "^0.1.7"
   },
   "engines": {
     "node": ">=18.0.0"

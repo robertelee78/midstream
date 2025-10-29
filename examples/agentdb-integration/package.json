@@ -1,0 +1,25 @@
+{
+  "name": "agentdb-midstream-examples",
+  "version": "1.0.0",
+  "description": "Working examples for AgentDB + Midstream integration",
+  "main": "basic-pattern-storage.js",
+  "scripts": {
+    "example1": "node basic-pattern-storage.js",
+    "example2": "node adaptive-tuning.js",
+    "example3": "node memory-anomaly-detection.js",
+    "example5": "node distributed-streaming.js",
+    "all": "npm run example1 && npm run example2 && npm run example3 && npm run example5"
+  },
+  "keywords": [
+    "agentdb",
+    "midstream",
+    "temporal-analysis",
+    "vector-database",
+    "reinforcement-learning",
+    "anomaly-detection"
+  ],
+  "author": "Midstream Contributors",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
+}

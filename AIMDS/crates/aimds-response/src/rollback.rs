@@ -161,11 +161,11 @@ impl RollbackManager {
 
         match entry.action.rollback(&entry.action_id) {
             Ok(_) => {
-                metrics::counter!("rollback.success").increment(1);
+                metrics::increment_counter!("rollback.success");
                 Ok(())
             }
             Err(e) => {
-                metrics::counter!("rollback.failure").increment(1);
+                metrics::increment_counter!("rollback.failure");
                 Err(e)
             }
         }

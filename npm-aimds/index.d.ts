@@ -2,6 +2,99 @@
  * TypeScript definitions for AIMDS
  */
 
+// Detection Engine types (v0.1.5+)
+export interface ThreatDetectionResult {
+  threats: Threat[];
+  isThreat: boolean;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  detectionTime: number;
+  attackCategories?: Record<string, number>;
+  mitigations?: string[];
+  timestamp: string;
+}
+
+export interface Threat {
+  type: string;
+  subtype?: string;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  confidence: number;
+  description: string;
+  mitigation?: string;
+  matched?: boolean;
+}
+
+export interface UnifiedDetectionOptions {
+  threshold?: number;
+  enablePII?: boolean;
+  enableJailbreak?: boolean;
+  enablePatternMatching?: boolean;
+  enableNeuroSymbolic?: boolean;
+  enableCrossModal?: boolean;
+  enableSymbolicReasoning?: boolean;
+  enableEmbeddingAnalysis?: boolean;
+}
+
+export interface DetectionMetadata {
+  hasMultimodal?: boolean;
+  hasImage?: boolean;
+  hasAudio?: boolean;
+  hasVideo?: boolean;
+  imageMetadata?: Record<string, any>;
+  imageData?: {
+    metadata?: Record<string, any>;
+    exif?: Record<string, any>;
+  };
+  audioData?: Record<string, any>;
+  videoData?: Record<string, any>;
+  embeddings?: number[];
+  text?: string;
+  imageDescription?: string;
+}
+
+export class DetectionEngine {
+  constructor(options?: UnifiedDetectionOptions);
+  detect(content: string, options?: DetectionMetadata): Promise<ThreatDetectionResult>;
+  getStats(): {
+    totalDetections: number;
+    averageDetectionTime: number;
+    threshold: number;
+  };
+}
+
+export class NeuroSymbolicDetector {
+  constructor(options?: UnifiedDetectionOptions);
+  detect(input: string, metadata?: DetectionMetadata): Promise<ThreatDetectionResult>;
+  getStats(): {
+    totalDetections: number;
+    crossModalAttacks: number;
+    symbolicAttacks: number;
+    embeddingAttacks: number;
+  };
+}
+
+export class MultimodalDetector {
+  constructor(options?: { threshold?: number });
+  detectImageAttacks(input: string, imageData?: any): Threat[];
+  detectAudioAttacks(input: string, audioData?: any): Threat[];
+  detectVideoAttacks(input: string, videoData?: any): Threat[];
+  getStats(): {
+    imageAttacks: number;
+    audioAttacks: number;
+    videoAttacks: number;
+    steganographyAttacks: number;
+  };
+}
+
+export class UnifiedDetectionSystem {
+  constructor(options?: UnifiedDetectionOptions);
+  detectThreats(input: string, metadata?: DetectionMetadata): Promise<ThreatDetectionResult>;
+  getStats(): {
+    textDetector: any;
+    neuroSymbolicDetector: any;
+    multimodalDetector: any;
+  };
+}
+
 // Detection types
 export interface DetectionOptions {
   threshold?: number;

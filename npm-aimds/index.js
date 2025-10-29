@@ -12,6 +12,14 @@ const { Responder } = require('./src/response');
 const { StreamProcessor } = require('./src/stream');
 const { ConfigLoader } = require('./src/config');
 
+// Detection engines
+const {
+  DetectionEngine,
+  NeuroSymbolicDetector,
+  MultimodalDetector,
+  UnifiedDetectionSystem,
+} = require('./src/proxy/detectors');
+
 // Export main classes
 module.exports = {
   // Core modules
@@ -23,6 +31,12 @@ module.exports = {
 
   // Configuration
   ConfigLoader,
+
+  // Detection Engines (v0.1.5+)
+  DetectionEngine,
+  NeuroSymbolicDetector,
+  MultimodalDetector,
+  UnifiedDetectionSystem,
 
   // Integrations
   AgentDBClient: require('./src/integrations/agentdb'),

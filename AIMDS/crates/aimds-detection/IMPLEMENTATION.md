@@ -82,7 +82,7 @@ Production-ready threat detection layer implemented with temporal pattern matchi
 
 ### temporal-compare
 ```rust
-use temporal_compare::{TemporalComparator, Sequence, ComparisonAlgorithm};
+use midstreamer_temporal_compare::{TemporalComparator, Sequence, ComparisonAlgorithm};
 
 // Create comparator
 let comparator = TemporalComparator::<i32>::new(1000, 1000);

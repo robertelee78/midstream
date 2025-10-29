@@ -25,12 +25,12 @@ ndarray = "0.15"
 statrs = "0.16"
 petgraph = "0.6"
 
-[target.'cfg(target_arch = "wasm32")'.dependencies]
-wasm-bindgen = "0.2"
-wasm-bindgen-futures = "0.4"
-js-sys = "0.3"
-console_error_panic_hook = "0.1"
-serde-wasm-bindgen = "0.6"
+# WASM dependencies (optional)
+wasm-bindgen = { workspace = true, optional = true }
+wasm-bindgen-futures = { workspace = true, optional = true }
+js-sys = { workspace = true, optional = true }
+console_error_panic_hook = { workspace = true, optional = true }
+serde-wasm-bindgen = { workspace = true, optional = true }
 
 [dev-dependencies]
 criterion.workspace = true
@@ -38,4 +38,8 @@ proptest.workspace = true
 tokio = { workspace = true, features = ["test-util"] }
 
 [lib]
-crate-type = ["cdylib", "rlib"]
+crate-type = ["rlib"]
+
+[features]
+default = []
+wasm = ["wasm-bindgen", "wasm-bindgen-futures", "js-sys", "console_error_panic_hook", "serde-wasm-bindgen"]

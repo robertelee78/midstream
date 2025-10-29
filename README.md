@@ -3,19 +3,26 @@
 **Real-Time LLM Streaming with Lean Agentic Learning & Temporal Analysis**
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![npm version](https://img.shields.io/npm/v/midstreamer.svg)](https://www.npmjs.com/package/midstreamer)
 [![Rust](https://img.shields.io/badge/Rust-1.71+-orange.svg)](https://www.rust-lang.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3+-blue.svg)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
 [![WASM](https://img.shields.io/badge/WASM-Ready-purple.svg)](wasm/)
-[![Crates.io](https://img.shields.io/badge/crates.io-5%20published-orange.svg)](https://crates.io/search?q=temporal)
+[![Crates.io](https://img.shields.io/badge/crates.io-10%20published-orange.svg)](https://crates.io/search?q=midstreamer)
 [![Security](https://img.shields.io/badge/Security-A+-brightgreen.svg)](security-report.json)
 [![Tests](https://img.shields.io/badge/Tests-139%20passing-brightgreen.svg)](npm/src/__tests__)
 [![CI/CD](https://img.shields.io/badge/CI%2FCD-Active-blue.svg)](.github/workflows/)
 [![Docs](https://img.shields.io/badge/docs-complete-success.svg)](docs/)
 
-**🎉 All 5 Core Crates Published on crates.io!**
+**🎉 All 10 Crates Published on crates.io!**
 
-- [temporal-compare](https://crates.io/crates/temporal-compare) • [nanosecond-scheduler](https://crates.io/crates/nanosecond-scheduler) • [temporal-attractor-studio](https://crates.io/crates/temporal-attractor-studio) • [temporal-neural-solver](https://crates.io/crates/temporal-neural-solver) • [strange-loop](https://crates.io/crates/strange-loop)
+**Midstream Core (6 crates):**
+- [midstreamer-temporal-compare](https://crates.io/crates/midstreamer-temporal-compare) • [midstreamer-scheduler](https://crates.io/crates/midstreamer-scheduler) • [midstreamer-neural-solver](https://crates.io/crates/midstreamer-neural-solver) • [midstreamer-attractor](https://crates.io/crates/midstreamer-attractor) • [midstreamer-quic](https://crates.io/crates/midstreamer-quic) • [midstreamer-strange-loop](https://crates.io/crates/midstreamer-strange-loop)
+
+**AIMDS Security (4 crates):**
+- [aimds-core](https://crates.io/crates/aimds-core) • [aimds-detection](https://crates.io/crates/aimds-detection) • [aimds-analysis](https://crates.io/crates/aimds-analysis) • [aimds-response](https://crates.io/crates/aimds-response)
+
+**📦 npm Package:** [midstreamer](https://www.npmjs.com/package/midstreamer) - WebAssembly-powered temporal analysis for JavaScript/TypeScript
 
 > **Created by rUv** - Advanced real-time LLM streaming platform with autonomous agents, temporal pattern detection, and multi-modal introspection.
 
@@ -110,11 +117,18 @@ Built with Rust for performance and TypeScript for flexibility, MidStream combin
 - Video object detection framework (TensorFlow-ready)
 
 ### 🦀 Rust Workspace Crates
-- **temporal-compare** - Pattern matching with DTW, LCS, edit distance
-- **nanosecond-scheduler** - Ultra-low-latency real-time task scheduling
-- **temporal-attractor-studio** - Dynamical systems & Lyapunov analysis
-- **temporal-neural-solver** - LTL verification with neural reasoning
-- **strange-loop** - Meta-learning & self-referential systems
+- **midstreamer-temporal-compare** - Pattern matching with DTW, LCS, edit distance
+- **midstreamer-scheduler** - Ultra-low-latency real-time task scheduling
+- **midstreamer-attractor** - Dynamical systems & Lyapunov analysis
+- **midstreamer-neural-solver** - LTL verification with neural reasoning
+- **midstreamer-quic** - QUIC/HTTP3 multi-stream support
+- **midstreamer-strange-loop** - Meta-learning & self-referential systems
+
+### 🛡️ AIMDS Security Crates
+- **aimds-core** - Core threat detection types and utilities
+- **aimds-detection** - Pattern matching, PII detection, threat scheduling
+- **aimds-analysis** - Behavioral analysis and attack surface mapping
+- **aimds-response** - Adaptive response with meta-learning
 
 ### 🔬 Advanced Analysis
 - **Pattern Detection** - Dynamic Time Warping (DTW), LCS, edit distance
@@ -149,6 +163,41 @@ Built with Rust for performance and TypeScript for flexibility, MidStream combin
 ```
 
 ### Installation
+
+#### Option 1: npm Package (Recommended for JavaScript/TypeScript)
+
+```bash
+# Install the WebAssembly package
+npm install midstreamer
+
+# Use in your project
+import { dtw_distance } from 'midstreamer';
+
+# Or use the CLI
+npx midstreamer version
+npx midstreamer benchmark
+npx midstreamer compare "1,2,3,4" "1,2,4,3"
+```
+
+#### Option 2: Rust Crates (For Rust Projects)
+
+```bash
+# Add to your Cargo.toml
+cargo add midstreamer-temporal-compare
+cargo add midstreamer-scheduler
+cargo add midstreamer-neural-solver
+cargo add midstreamer-attractor
+cargo add midstreamer-quic
+cargo add midstreamer-strange-loop
+
+# For AIMDS security features
+cargo add aimds-core
+cargo add aimds-detection
+cargo add aimds-analysis
+cargo add aimds-response
+```
+
+#### Option 3: From Source
 
 ```bash
 # Clone the repository

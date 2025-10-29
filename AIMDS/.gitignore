@@ -33,3 +33,4 @@ coverage/
 # Rust
 Cargo.lock
 **/*.rs.bk
+target/package/*/

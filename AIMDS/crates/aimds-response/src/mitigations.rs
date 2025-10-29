@@ -78,7 +78,7 @@ impl MitigationAction {
 
         // In production, this would integrate with firewall/WAF
         // For now, we simulate the action
-        metrics::counter!("mitigation.blocks").increment(1);
+        metrics::increment_counter!("mitigation.blocks");
 
         Ok(action_id)
     }
@@ -94,7 +94,7 @@ impl MitigationAction {
         let action_id = uuid::Uuid::new_v4().to_string();
 
         // In production, integrate with rate limiter (Redis, etc.)
-        metrics::counter!("mitigation.rate_limits").increment(1);
+        metrics::increment_counter!("mitigation.rate_limits");
 
         Ok(action_id)
     }
@@ -110,7 +110,7 @@ impl MitigationAction {
         let action_id = uuid::Uuid::new_v4().to_string();
 
         // In production, integrate with verification service
-        metrics::counter!("mitigation.verifications").increment(1);
+        metrics::increment_counter!("mitigation.verifications");
 
         Ok(action_id)
     }
@@ -126,7 +126,7 @@ impl MitigationAction {
         let action_id = uuid::Uuid::new_v4().to_string();
 
         // In production, integrate with alerting system (PagerDuty, etc.)
-        metrics::counter!("mitigation.alerts").increment(1);
+        metrics::increment_counter!("mitigation.alerts");
 
         Ok(action_id)
     }
@@ -141,7 +141,7 @@ impl MitigationAction {
         let action_id = uuid::Uuid::new_v4().to_string();
 
         // In production, update detection engine rules
-        metrics::counter!("mitigation.rule_updates").increment(1);
+        metrics::increment_counter!("mitigation.rule_updates");
 
         Ok(action_id)
     }
