@@ -1,6 +1,7 @@
 {
   "name": "aidefence",
   "version": "0.1.7",
+  "type": "commonjs",
   "description": "AI Defence - Real-time AI security with neuro-symbolic detection, multimodal defense, and adaptive response",
   "keywords": [
     "ai",
