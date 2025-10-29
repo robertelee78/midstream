@@ -14,6 +14,7 @@
 
 const { spawn } = require('child_process');
 const { nanoid } = require('nanoid');
+const { InputValidator } = require('../utils/input-validator');
 
 class ReasoningBankCoordinator {
   constructor(options = {}) {
@@ -539,11 +540,16 @@ class ReasoningBankCoordinator {
 
   /**
    * Helper: Execute AgentDB CLI command
+   * SECURITY FIX: Sanitize all arguments to prevent command injection (CVSS 9.8)
    */
   execAgentDB(args) {
     return new Promise((resolve, reject) => {
-      const proc = spawn('npx', ['agentdb', ...args], {
-        env: { ...process.env, AGENTDB_PATH: this.dbPath }
+      // Sanitize all arguments to prevent command injection
+      const safeArgs = InputValidator.sanitizeCommandArgs(args.map(String));
+
+      const proc = spawn('npx', ['agentdb', ...safeArgs], {
+        env: { ...process.env, AGENTDB_PATH: this.dbPath },
+        shell: false // CRITICAL: Disable shell to prevent injection attacks
       });
 
       let stdout = '';
