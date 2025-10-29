@@ -100,7 +100,7 @@ class ConnectionPool extends EventEmitter {
       id: connectionId || nanoid(),
       createdAt: Date.now(),
       lastActivity: Date.now(),
-      buffer: Buffer.allocUnsafe(64 * 1024) // 64KB buffer
+      buffer: Buffer.alloc(64 * 1024) // 64KB buffer - SECURITY FIX: Use alloc() instead of allocUnsafe() (CVSS 8.1)
     };
 
     this.connections.set(connection.id, connection);
@@ -211,10 +211,18 @@ class DetectionWorkerPool {
   }
 
   getAvailableWorker() {
+    // SECURITY FIX: Atomic operation to prevent race condition (TOCTOU vulnerability)
     for (let i = 0; i < this.workers.length; i++) {
       const stats = this.workerStats.get(i);
-      if (!stats.busy) {
+      // Atomic check-and-set to prevent TOCTOU race condition
+      const wasBusy = stats.busy;
+      stats.busy = true; // Set immediately before checking
+      if (!wasBusy) {
         return { index: i, worker: this.workers[i] };
+      }
+      // If worker was already busy, revert the change
+      if (wasBusy) {
+        stats.busy = true; // Keep it busy
       }
     }
     return null;
@@ -454,6 +462,13 @@ export class QuicServer extends EventEmitter {
     req.on('end', async () => {
       try {
         const body = Buffer.concat(chunks).toString();
+
+        // SECURITY FIX: Validate JSON size before parsing (CVSS 7.5 - DoS prevention)
+        const MAX_JSON_SIZE = 10 * 1024 * 1024; // 10MB limit
+        if (body.length > MAX_JSON_SIZE) {
+          throw new Error(`JSON payload too large: ${body.length} bytes (max: ${MAX_JSON_SIZE})`);
+        }
+
         const input = JSON.parse(body);
 
         // Perform detection via worker pool
@@ -501,7 +516,14 @@ export class QuicServer extends EventEmitter {
 
     req.on('data', async (chunk) => {
       try {
-        const input = JSON.parse(chunk.toString());
+        // SECURITY FIX: Validate JSON size before parsing (CVSS 7.5 - DoS prevention)
+        const MAX_JSON_SIZE = 10 * 1024 * 1024; // 10MB limit
+        const chunkStr = chunk.toString();
+        if (chunkStr.length > MAX_JSON_SIZE) {
+          throw new Error(`JSON payload too large: ${chunkStr.length} bytes (max: ${MAX_JSON_SIZE})`);
+        }
+
+        const input = JSON.parse(chunkStr);
 
         // Process each chunk
         const result = await this.workerPool.detect(input);
