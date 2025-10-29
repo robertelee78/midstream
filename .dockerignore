@@ -1,0 +1,79 @@
+# AI Defence 2.0 - Docker Ignore File
+
+# Environment files (will be passed via env_file)
+.env
+.env.*
+!.env.example
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Node modules (will be installed in container)
+node_modules
+npm-aimds/node_modules
+npm-aidefense/node_modules
+npm-wasm/node_modules
+**/node_modules
+
+# Build artifacts
+dist
+build
+*.tgz
+coverage
+.nyc_output
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Testing
+test-results
+.vitest
+.jest
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp
+temp
+*.tmp
+
+# Backups
+backups
+*.backup
+
+# Documentation (except what's needed for tests)
+docs/archive
+docs/plans
+
+# Examples (keep minimal)
+examples
+
+# Rust build artifacts
+target
+Cargo.lock
+AIMDS/target
+*.rlib
+
+# Cache
+.cache
+.parcel-cache
+
+# Misc
+.swarm
+*.pid

@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  aidefence-test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    container_name: aidefence-v2-test
+    env_file:
+      - .env.local
+    environment:
+      - NODE_ENV=test
+      - CI=true
+      - LOG_LEVEL=debug
+    volumes:
+      - ./npm-aimds:/app/npm-aimds
+      - ./tests:/app/tests
+      - ./docs:/app/docs
+      - test-results:/app/test-results
+      - coverage:/app/coverage
+    ports:
+      - "3000:3000"
+      - "8080:8080"
+      - "9090:9090"
+    networks:
+      - aidefence-test-net
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('healthy')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    command: >
+      sh -c "
+        echo '🚀 Starting AI Defence 2.0 Test Suite' &&
+        echo '📊 Environment: Docker Remote Test' &&
+        echo '🔐 Loading environment variables...' &&
+        cd /app/npm-aimds &&
+        npm test -- --verbose --coverage 2>&1 | tee /app/test-results/test-output.log &&
+        echo '✅ Test suite complete'
+      "
+
+  # AgentDB service for integration tests
+  agentdb-service:
+    image: node:18-bullseye-slim
+    container_name: agentdb-test-service
+    working_dir: /app
+    volumes:
+      - agentdb-data:/app/data
+    networks:
+      - aidefence-test-net
+    command: >
+      sh -c "
+        npm install -g agentdb@latest &&
+        agentdb serve --port 9000 --data-dir /app/data
+      "
+    ports:
+      - "9000:9000"
+
+volumes:
+  test-results:
+  coverage:
+  agentdb-data:
+
+networks:
+  aidefence-test-net:
+    driver: bridge

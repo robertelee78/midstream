@@ -1,0 +1,917 @@
+
+> aidefence@0.1.7 test
+> vitest run
+
+
+[1m[46m RUN [49m[22m [36mv4.0.5 [39m[90m/workspaces/midstream/npm-aimds[39m
+
+ [31m❯[39m tests/proxy.test.js [2m([22m[2m26 tests[22m[2m | [22m[31m4 failed[39m[2m)[22m[32m 48[2mms[22m[39m
+       [32m✓[39m should throw error if provider is missing[32m 2[2mms[22m[39m
+       [32m✓[39m should throw error if apiKey is missing for non-bedrock provider[32m 0[2mms[22m[39m
+       [32m✓[39m should throw error for invalid strategy[32m 0[2mms[22m[39m
+       [32m✓[39m should throw error for invalid threshold[32m 0[2mms[22m[39m
+       [32m✓[39m should accept valid configuration[32m 2[2mms[22m[39m
+[31m       [31m×[31m should detect prompt injection[39m[32m 20[2mms[22m[39m
+       [32m✓[39m should detect PII (email)[32m 4[2mms[22m[39m
+       [32m✓[39m should detect jailbreak attempts[32m 1[2mms[22m[39m
+       [32m✓[39m should detect multi-stage jailbreak[32m 1[2mms[22m[39m
+       [32m✓[39m should complete detection in <10ms[32m 0[2mms[22m[39m
+       [32m✓[39m should not flag safe content[32m 0[2mms[22m[39m
+       [32m✓[39m should provide content hash[32m 0[2mms[22m[39m
+         [32m✓[39m should not modify request in passive mode[32m 0[2mms[22m[39m
+         [32m✓[39m should sanitize PII in balanced mode[32m 1[2mms[22m[39m
+[31m         [31m×[31m should add warning to sanitized content[39m[32m 1[2mms[22m[39m
+[31m         [31m×[31m should strictly filter threats in aggressive mode[39m[32m 2[2mms[22m[39m
+         [32m✓[39m should block high severity response threats[32m 0[2mms[22m[39m
+       [32m✓[39m should support OpenAI provider[32m 1[2mms[22m[39m
+       [32m✓[39m should support Anthropic provider[32m 0[2mms[22m[39m
+       [32m✓[39m should support Google provider[32m 1[2mms[22m[39m
+       [32m✓[39m should support Bedrock provider[32m 0[2mms[22m[39m
+       [32m✓[39m should reject unsupported provider[32m 1[2mms[22m[39m
+       [32m✓[39m should maintain <10ms detection time under load[32m 3[2mms[22m[39m
+       [32m✓[39m should handle concurrent detections[32m 3[2mms[22m[39m
+       [32m✓[39m should handle empty request data[32m 0[2mms[22m[39m
+[31m       [31m×[31m should handle malformed detection results[39m[32m 1[2mms[22m[39m
+ [31m❯[39m tests/detectors/multimodal-detector.test.js [2m([22m[2m48 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 60[2mms[22m[39m
+       [32m✓[39m should initialize with default threshold[32m 2[2mms[22m[39m
+       [32m✓[39m should accept custom threshold[32m 0[2mms[22m[39m
+       [32m✓[39m should initialize patterns[32m 0[2mms[22m[39m
+       [32m✓[39m should initialize statistics[32m 1[2mms[22m[39m
+       [32m✓[39m should detect metadata injection[32m 1[2mms[22m[39m
+       [32m✓[39m should check multiple metadata fields[32m 1[2mms[22m[39m
+       [32m✓[39m should detect EXIF manipulation[32m 2[2mms[22m[39m
+       [32m✓[39m should detect steganography keywords[32m 0[2mms[22m[39m
+       [32m✓[39m should detect adversarial patches[32m 1[2mms[22m[39m
+       [32m✓[39m should return empty array for clean images[32m 1[2mms[22m[39m
+       [32m✓[39m should detect inaudible commands[32m 1[2mms[22m[39m
+[31m       [31m×[31m should detect audio perturbations[39m[32m 14[2mms[22m[39m
+       [32m✓[39m should detect subliminal messaging[32m 0[2mms[22m[39m
+       [32m✓[39m should return empty for clean audio[32m 0[2mms[22m[39m
+       [32m✓[39m should detect frame injection[32m 5[2mms[22m[39m
+       [32m✓[39m should detect temporal perturbations[32m 0[2mms[22m[39m
+       [32m✓[39m should detect subliminal frames[32m 0[2mms[22m[39m
+       [32m✓[39m should return empty for clean video[32m 0[2mms[22m[39m
+       [32m✓[39m should detect metadata injection patterns[32m 0[2mms[22m[39m
+       [32m✓[39m should detect suspicious patterns in metadata[32m 0[2mms[22m[39m
+       [32m✓[39m should detect oversized EXIF data[32m 0[2mms[22m[39m
+       [32m✓[39m should handle normal EXIF data[32m 0[2mms[22m[39m
+       [32m✓[39m should detect steganography keywords[32m 4[2mms[22m[39m
+       [32m✓[39m should detect adversarial patch keywords[32m 0[2mms[22m[39m
+       [32m✓[39m should detect inaudible command keywords[32m 0[2mms[22m[39m
+       [32m✓[39m should detect audio perturbation keywords[32m 0[2mms[22m[39m
+       [32m✓[39m should detect subliminal messaging keywords[32m 0[2mms[22m[39m
+       [32m✓[39m should detect frame injection keywords[32m 0[2mms[22m[39m
+       [32m✓[39m should detect temporal perturbation keywords[32m 0[2mms[22m[39m
+       [32m✓[39m should detect subliminal frame keywords[32m 0[2mms[22m[39m
+       [32m✓[39m should include all required fields[32m 0[2mms[22m[39m
+       [32m✓[39m should have appropriate severity levels[32m 4[2mms[22m[39m
+       [32m✓[39m should have confidence between 0 and 1[32m 0[2mms[22m[39m
+       [32m✓[39m should return statistics object[32m 0[2mms[22m[39m
+       [32m✓[39m should not modify internal stats[32m 0[2mms[22m[39m
+       [32m✓[39m should detect image attacks quickly[32m 0[2mms[22m[39m
+       [32m✓[39m should detect audio attacks quickly[32m 0[2mms[22m[39m
+       [32m✓[39m should detect video attacks quickly[32m 0[2mms[22m[39m
+       [32m✓[39m should handle concurrent detections[32m 0[2mms[22m[39m
+       [32m✓[39m should handle empty input[32m 0[2mms[22m[39m
+       [32m✓[39m should handle undefined metadata[32m 0[2mms[22m[39m
+       [32m✓[39m should handle null audioData[32m 0[2mms[22m[39m
+       [32m✓[39m should handle empty objects[32m 0[2mms[22m[39m
+       [32m✓[39m should handle very long input[32m 0[2mms[22m[39m
+       [32m✓[39m should handle special characters[32m 0[2mms[22m[39m
+       [32m✓[39m should handle unicode[32m 0[2mms[22m[39m
+       [32m✓[39m should detect multiple attack types simultaneously[32m 0[2mms[22m[39m
+       [32m✓[39m should provide mitigation strategies[32m 0[2mms[22m[39m
+[90mstderr[2m | tests/detectors/neurosymbolic-detector.test.js[2m > [22m[2mNeuroSymbolicDetector[2m > [22m[2mEdge Cases[2m > [22m[2mshould handle null metadata
+[22m[39mNeuro-symbolic detection error: TypeError: Cannot read properties of null (reading 'hasMultimodal')
+    at NeuroSymbolicDetector.detect [90m(/workspaces/midstream/npm-aimds/[39msrc/proxy/detectors/neurosymbolic-detector.js:46:45[90m)[39m
+    at [90m/workspaces/midstream/npm-aimds/[39mtests/detectors/neurosymbolic-detector.test.js:383:37
+    at [90mfile:///workspaces/midstream/npm-aimds/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:157:11
+    at [90mfile:///workspaces/midstream/npm-aimds/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:753:26
+    at [90mfile:///workspaces/midstream/npm-aimds/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1636:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///workspaces/midstream/npm-aimds/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1602:10[90m)[39m
+    at runTest [90m(file:///workspaces/midstream/npm-aimds/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1309:12[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:105:5)[39m
+    at runSuite [90m(file:///workspaces/midstream/npm-aimds/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1468:8[90m)[39m
+
+ [31m❯[39m tests/security/injection-tests.test.js [2m([22m[2m43 tests[22m[2m | [22m[31m15 failed[39m[2m)[22m[32m 84[2mms[22m[39m
+[31m       [31m×[31m should detect direct instruction override[39m[32m 38[2mms[22m[39m
+[31m       [31m×[31m should detect role manipulation attempts[39m[32m 3[2mms[22m[39m
+[31m       [31m×[31m should detect context manipulation[39m[32m 1[2mms[22m[39m
+[31m       [31m×[31m should detect encoded/obfuscated injections[39m[32m 2[2mms[22m[39m
+[31m       [31m×[31m should detect multi-step injection[39m[32m 1[2mms[22m[39m
+[31m       [31m×[31m should detect syllogistic manipulation[39m[32m 7[2mms[22m[39m
+[31m       [31m×[31m should detect logical contradictions[39m[32m 1[2mms[22m[39m
+[31m       [31m×[31m should detect conditional bypass attempts[39m[32m 1[2mms[22m[39m
+       [32m✓[39m should detect formal logic notation abuse[32m 1[2mms[22m[39m
+[31m       [31m×[31m should detect relationship poisoning[39m[32m 1[2mms[22m[39m
+       [32m✓[39m should detect triple injection[32m 1[2mms[22m[39m
+       [32m✓[39m should detect reasoning rule manipulation[32m 0[2mms[22m[39m
+[31m       [31m×[31m should detect hidden instructions in image metadata[39m[32m 1[2mms[22m[39m
+       [32m✓[39m should detect visual adversarial perturbations[32m 0[2mms[22m[39m
+       [32m✓[39m should detect audio steganography[32m 0[2mms[22m[39m
+       [32m✓[39m should detect semantic inconsistency[32m 0[2mms[22m[39m
+       [32m✓[39m should detect image metadata injection[32m 1[2mms[22m[39m
+       [32m✓[39m should detect EXIF manipulation[32m 2[2mms[22m[39m
+       [32m✓[39m should detect steganography keywords[32m 0[2mms[22m[39m
+       [32m✓[39m should detect adversarial patches[32m 0[2mms[22m[39m
+       [32m✓[39m should detect inaudible audio commands[32m 1[2mms[22m[39m
+[31m       [31m×[31m should detect audio adversarial perturbations[39m[32m 1[2mms[22m[39m
+       [32m✓[39m should detect subliminal messaging[32m 0[2mms[22m[39m
+       [32m✓[39m should detect video frame injection[32m 1[2mms[22m[39m
+       [32m✓[39m should detect temporal perturbations[32m 0[2mms[22m[39m
+       [32m✓[39m should detect subliminal frames[32m 0[2mms[22m[39m
+       [32m✓[39m should detect adversarial embeddings[32m 1[2mms[22m[39m
+       [32m✓[39m should detect embedding cluster anomalies[32m 0[2mms[22m[39m
+       [32m✓[39m should handle normal embeddings safely[32m 1[2mms[22m[39m
+       [32m✓[39m should handle concurrent detection requests safely[32m 1[2mms[22m[39m
+[31m       [31m×[31m should maintain state consistency under concurrent load[39m[32m 1[2mms[22m[39m
+[31m       [31m×[31m should not leak data between concurrent requests[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should detect privilege escalation attempts[39m[32m 0[2mms[22m[39m
+[31m       [31m×[31m should detect authentication bypass attempts[39m[32m 0[2mms[22m[39m
+       [32m✓[39m should maintain fast detection under adversarial load[32m 1[2mms[22m[39m
+       [32m✓[39m should not degrade under repeated attacks[32m 1[2mms[22m[39m
+       [32m✓[39m should handle empty input[32m 2[2mms[22m[39m
+       [32m✓[39m should handle very long input[32m 1[2mms[22m[39m
+       [32m✓[39m should handle special characters[32m 0[2mms[22m[39m
+       [32m✓[39m should handle unicode and emojis[32m 0[2mms[22m[39m
+       [32m✓[39m should handle null-like values gracefully[32m 0[2mms[22m[39m
+       [32m✓[39m should not flag legitimate queries[32m 0[2mms[22m[39m
+       [32m✓[39m should not flag technical discussions[32m 1[2mms[22m[39m
+ [31m❯[39m tests/detectors/neurosymbolic-detector.test.js [2m([22m[2m41 tests[22m[2m | [22m[31m7 failed[39m[2m)[22m[32m 89[2mms[22m[39m
+       [32m✓[39m should initialize with default options[32m 9[2mms[22m[39m
+       [32m✓[39m should accept custom threshold[32m 0[2mms[22m[39m
+       [32m✓[39m should initialize detection patterns[32m 1[2mms[22m[39m
+       [32m✓[39m should initialize statistics[32m 1[2mms[22m[39m
+       [32m✓[39m should detect threats successfully[32m 3[2mms[22m[39m
+       [32m✓[39m should return empty threats for benign input[32m 6[2mms[22m[39m
+[31m       [31m×[31m should measure detection time[39m[32m 15[2mms[22m[39m
+       [32m✓[39m should update statistics on detection[32m 1[2mms[22m[39m
+[31m       [31m×[31m should detect hidden instructions in metadata[39m[32m 16[2mms[22m[39m
+       [32m✓[39m should detect visual adversarial perturbations[32m 0[2mms[22m[39m
+       [32m✓[39m should detect audio steganography[32m 0[2mms[22m[39m
+       [32m✓[39m should detect semantic inconsistency[32m 7[2mms[22m[39m
+       [32m✓[39m should detect formal logic bypass[32m 0[2mms[22m[39m
+       [32m✓[39m should detect Prolog injection[32m 0[2mms[22m[39m
+       [32m✓[39m should detect ontology manipulation[32m 0[2mms[22m[39m
+       [32m✓[39m should detect adversarial embeddings[32m 1[2mms[22m[39m
+       [32m✓[39m should detect cluster anomalies[32m 0[2mms[22m[39m
+[31m       [31m×[31m should handle normal embeddings[39m[32m 3[2mms[22m[39m
+       [32m✓[39m should detect syllogistic manipulation[32m 1[2mms[22m[39m
+[31m       [31m×[31m should detect logical contradictions[39m[32m 1[2mms[22m[39m
+       [32m✓[39m should detect conditional bypass[32m 0[2mms[22m[39m
+       [32m✓[39m should detect relationship poisoning[32m 0[2mms[22m[39m
+       [32m✓[39m should detect triple injection[32m 0[2mms[22m[39m
+       [32m✓[39m should detect reasoning rule manipulation[32m 0[2mms[22m[39m
+[31m       [31m×[31m should return critical for highest severity[39m[32m 2[2mms[22m[39m
+       [32m✓[39m should calculate maximum severity correctly[32m 0[2mms[22m[39m
+       [32m✓[39m should categorize attack types[32m 0[2mms[22m[39m
+       [32m✓[39m should count multiple attacks of same type[32m 0[2mms[22m[39m
+       [32m✓[39m should detect hidden instructions in metadata fields[32m 0[2mms[22m[39m
+       [32m✓[39m should detect audio steganography keywords[32m 0[2mms[22m[39m
+       [32m✓[39m should calculate semantic inconsistency[32m 0[2mms[22m[39m
+       [32m✓[39m should identify adversarial embeddings[32m 0[2mms[22m[39m
+       [32m✓[39m should detect embedding cluster anomalies[32m 0[2mms[22m[39m
+[31m       [31m×[31m should update cross-modal attack stats[39m[32m 0[2mms[22m[39m
+       [32m✓[39m should update symbolic attack stats[32m 0[2mms[22m[39m
+       [32m✓[39m should update embedding attack stats[32m 0[2mms[22m[39m
+       [32m✓[39m should detect quickly[32m 0[2mms[22m[39m
+       [32m✓[39m should handle concurrent detections[32m 1[2mms[22m[39m
+       [32m✓[39m should handle empty input[32m 0[2mms[22m[39m
+[31m       [31m×[31m should handle null metadata[39m[32m 3[2mms[22m[39m
+       [32m✓[39m should handle error gracefully[32m 1[2mms[22m[39m
+TAP version 13
+# Subtest: AIMDS QUIC Server
+    # Subtest: Server Initialization
+        # Subtest: should start server successfully
+        ok 1 - should start server successfully
+          ---
+          duration_ms: 2.210005
+          type: 'test'
+          ...
+        # Subtest: should have correct configuration
+        ok 2 - should have correct configuration
+          ---
+          duration_ms: 0.234107
+          type: 'test'
+          ...
+        # Subtest: should initialize connection pool
+        ok 3 - should initialize connection pool
+          ---
+          duration_ms: 0.254385
+          type: 'test'
+          ...
+        # Subtest: should initialize worker pool
+        ok 4 - should initialize worker pool
+          ---
+          duration_ms: 0.324065
+          type: 'test'
+          ...
+        1..4
+    ok 1 - Server Initialization
+      ---
+      duration_ms: 3.981993
+      type: 'suite'
+      ...
+    # Subtest: Detection Endpoint
+        # Subtest: should detect safe input
+        ok 1 - should detect safe input
+          ---
+          duration_ms: 51.68545
+          type: 'test'
+          ...
+        # Subtest: should detect manipulation attempt
+        not ok 2 - should detect manipulation attempt
+(node:698038) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///workspaces/midstream/npm-aimds/src/detection/worker.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /workspaces/midstream/npm-aimds/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:698038) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///workspaces/midstream/npm-aimds/src/detection/worker.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /workspaces/midstream/npm-aimds/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+          ---
+          duration_ms: 14.434261
+          type: 'test'
+          location: '/workspaces/midstream/npm-aimds/tests/quic-server.test.js:66:33'
+          failureType: 'testCodeFailure'
+          error: |-
+            Expected values to be strictly equal:
+            
+            false !== true
+            
+          code: 'ERR_ASSERTION'
+          name: 'AssertionError'
+          expected: true
+          actual: false
+          operator: 'strictEqual'
+          stack: |-
+            TestContext.<anonymous> (/workspaces/midstream/npm-aimds/tests/quic-server.test.js:75:14)
+            processTicksAndRejections (node:internal/process/task_queues:105:5)
+            Test.run (node:internal/test_runner/test:1054:7)
+            Suite.processPendingSubtests (node:internal/test_runner/test:744:7)
+          ...
+        # Subtest: should return processing time
+        ok 3 - should return processing time
+          ---
+          duration_ms: 6.940956
+          type: 'test'
+          ...
+        1..3
+    not ok 2 - Detection Endpoint
+      ---
+      duration_ms: 73.902208
+      type: 'suite'
+      location: '/workspaces/midstream/npm-aimds/tests/quic-server.test.js:49:37'
+      failureType: 'subtestsFailed'
+      error: '1 subtest failed'
+      code: 'ERR_TEST_FAILURE'
+      ...
+    # Subtest: Health Endpoint
+        # Subtest: should return health status
+        ok 1 - should return health status
+          ---
+          duration_ms: 5.396374
+          type: 'test'
+          ...
+        1..1
+    ok 3 - Health Endpoint
+      ---
+      duration_ms: 5.932004
+      type: 'suite'
+      ...
+    # Subtest: Metrics Endpoint
+        # Subtest: should return Prometheus metrics
+        ok 1 - should return Prometheus metrics
+          ---
+          duration_ms: 5.613418
+          type: 'test'
+          ...
+        1..1
+    ok 4 - Metrics Endpoint
+      ---
+      duration_ms: 5.864747
+      type: 'suite'
+      ...
+ [32m✓[39m tests/learning/reflexion-engine.test.js [2m([22m[2m32 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+ [32m✓[39m tests/learning/reasoningbank.test.js [2m([22m[2m26 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Suites 11 [49m[22m[31m⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/detection.test.js[2m [ tests/detection.test.js ][22m
+[31m[1mError[22m: Vitest cannot be imported in a CommonJS module using require(). Please use "import" instead.
+
+If you are using "import" in your source code, then it's possible it was bundled into require() automatically by your bundler. In that case, do not bundle CommonJS output since it will never work with Vitest, or use dynamic import() which is available in all CommonJS modules.[39m
+[90m [2m❯[22m Object.<anonymous> node_modules/vitest/index.cjs:[2m1:7[22m[39m
+[36m [2m❯[22m tests/detection.test.js:[2m5:34[22m[39m
+    [90m  3| [39m */[39m
+    [90m  4| [39m
+    [90m  5| [39m[35mconst[39m { describe[33m,[39m it[33m,[39m expect } [33m=[39m [34mrequire[39m([32m'vitest'[39m)[33m;[39m
+    [90m   | [39m                                 [31m^[39m
+    [90m  6| [39m[35mconst[39m { [33mDetector[39m } [33m=[39m [34mrequire[39m([32m'../src/detection'[39m)[33m;[39m
+    [90m  7| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/quic-server.test.js[2m [ tests/quic-server.test.js ][22m
+[31m[1mError[22m: No test suite found in file /workspaces/midstream/npm-aimds/tests/quic-server.test.js[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/benchmarks/vector-search-perf.test.js[2m [ tests/benchmarks/vector-search-perf.test.js ][22m
+[31m[1mSyntaxError[22m: [vite] The requested module '/node_modules/agentdb/dist/index.js' does not provide an export named 'AgentDB'[39m
+[36m [2m❯[22m src/integrations/agentdb-integration.js:[2m6:1[22m[39m
+    [90m  4| [39m */[39m
+    [90m  5| [39m
+    [90m  6| [39m[35mimport[39m { [33mAgentDB[39m } [35mfrom[39m [32m'agentdb'[39m[33m;[39m
+    [90m   | [39m[31m^[39m
+    [90m  7| [39m
+    [90m  8| [39m[35mexport[39m [35mclass[39m [33mAgentDBIntegration[39m {
+[90m [2m❯[22m tests/benchmarks/vector-search-perf.test.js:[2m7:1[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/integration/end-to-end.test.ts[2m [ tests/integration/end-to-end.test.ts ][22m
+[31m[1mError[22m: Cannot find package 'helmet' imported from '/workspaces/midstream/AIMDS/src/gateway/server.ts'[39m
+[36m [2m❯[22m ../AIMDS/src/gateway/server.ts:[2m8:1[22m[39m
+    [90m  6| [39m[35mimport[39m express[33m,[39m { [33mRequest[39m[33m,[39m [33mResponse[39m[33m,[39m [33mNextFunction[39m } [35mfrom[39m [32m'express'[39m[33m;[39m
+    [90m  7| [39m[35mimport[39m cors [35mfrom[39m [32m'cors'[39m[33m;[39m
+    [90m  8| [39m[35mimport[39m helmet [35mfrom[39m [32m'helmet'[39m[33m;[39m
+    [90m   | [39m[31m^[39m
+    [90m  9| [39m[35mimport[39m compression [35mfrom[39m [32m'compression'[39m[33m;[39m
+    [90m 10| [39m[35mimport[39m rateLimit [35mfrom[39m [32m'express-rate-limit'[39m[33m;[39m
+[90m [2m❯[22m tests/integration/end-to-end.test.ts:[2m6:1[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/intelligence/embeddings.test.js[2m [ tests/intelligence/embeddings.test.js ][22m
+[31m[1mSyntaxError[22m: [vite] The requested module '/node_modules/agentdb/dist/index.js' does not provide an export named 'AgentDB'[39m
+[36m [2m❯[22m src/integrations/agentdb-integration.js:[2m6:1[22m[39m
+    [90m  4| [39m */[39m
+    [90m  5| [39m
+    [90m  6| [39m[35mimport[39m { [33mAgentDB[39m } [35mfrom[39m [32m'agentdb'[39m[33m;[39m
+    [90m   | [39m[31m^[39m
+    [90m  7| [39m
+    [90m  8| [39m[35mexport[39m [35mclass[39m [33mAgentDBIntegration[39m {
+[90m [2m❯[22m tests/intelligence/embeddings.test.js:[2m7:1[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/intelligence/vector-store.test.js[2m [ tests/intelligence/vector-store.test.js ][22m
+[31m[1mSyntaxError[22m: [vite] The requested module '/node_modules/agentdb/dist/index.js' does not provide an export named 'AgentDB'[39m
+[36m [2m❯[22m src/integrations/agentdb-integration.js:[2m6:1[22m[39m
+    [90m  4| [39m */[39m
+    [90m  5| [39m
+    [90m  6| [39m[35mimport[39m { [33mAgentDB[39m } [35mfrom[39m [32m'agentdb'[39m[33m;[39m
+    [90m   | [39m[31m^[39m
+    [90m  7| [39m
+    [90m  8| [39m[35mexport[39m [35mclass[39m [33mAgentDBIntegration[39m {
+[90m [2m❯[22m tests/intelligence/vector-store.test.js:[2m7:1[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/performance/detection-performance.test.ts[2m [ tests/performance/detection-performance.test.ts ][22m
+[31m[1mReferenceError[22m: jest is not defined[39m
+[36m [2m❯[22m tests/performance/detection-performance.test.ts:[2m14:1[22m[39m
+    [90m 12| [39m} [35mfrom[39m [32m'../fixtures/mock-data'[39m[33m;[39m
+    [90m 13| [39m
+    [90m 14| [39mjest[33m.[39m[34mmock[39m([32m'agentdb'[39m)[33m;[39m
+    [90m   | [39m[31m^[39m
+    [90m 15| [39m
+    [90m 16| [39m[34mdescribe[39m([32m'Detection Performance Tests'[39m[33m,[39m () [33m=>[39m {
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/performance/verification-performance.test.ts[2m [ tests/performance/verification-performance.test.ts ][22m
+[31m[1mError[22m: Cannot find package 'lean-agentic' imported from '/workspaces/midstream/AIMDS/src/lean-agentic/verifier.ts'[39m
+[36m [2m❯[22m ../AIMDS/src/lean-agentic/verifier.ts:[2m6:1[22m[39m
+    [90m  4| [39m */[39m
+    [90m  5| [39m
+    [90m  6| [39m[35mimport[39m leanAgentic [35mfrom[39m [32m'lean-agentic'[39m[33m;[39m
+    [90m   | [39m[31m^[39m
+    [90m  7| [39m[35mimport[39m {
+    [90m  8| [39m  [33mSecurityPolicy[39m[33m,[39m
+[90m [2m❯[22m tests/performance/verification-performance.test.ts:[2m6:1[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/agentdb-client.test.ts[2m [ tests/unit/agentdb-client.test.ts ][22m
+[31m[1mReferenceError[22m: jest is not defined[39m
+[36m [2m❯[22m tests/unit/agentdb-client.test.ts:[2m20:1[22m[39m
+    [90m 18| [39m
+    [90m 19| [39m[90m// Mock agentdb module[39m
+    [90m 20| [39mjest[33m.[39m[34mmock[39m([32m'agentdb'[39m[33m,[39m () [33m=>[39m ({
+    [90m   | [39m[31m^[39m
+    [90m 21| [39m  createDatabase[33m:[39m jest[33m.[39m[34mfn[39m(() [33m=>[39m ({
+    [90m 22| [39m    createIndex[33m:[39m jest[33m.[39m[34mfn[39m()[33m.[39m[34mmockResolvedValue[39m(undefined)[33m,[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/gateway-server.test.ts[2m [ tests/unit/gateway-server.test.ts ][22m
+[31m[1mError[22m: Cannot find package 'supertest' imported from '/workspaces/midstream/npm-aimds/tests/unit/gateway-server.test.ts'[39m
+[36m [2m❯[22m tests/unit/gateway-server.test.ts:[2m6:1[22m[39m
+    [90m  4| [39m */[39m
+    [90m  5| [39m
+    [90m  6| [39m[35mimport[39m request [35mfrom[39m [32m'supertest'[39m[33m;[39m
+    [90m   | [39m[31m^[39m
+    [90m  7| [39m[35mimport[39m { [33mAIMDSGateway[39m } [35mfrom[39m [32m'../../../AIMDS/src/gateway/server'[39m[33m;[39m
+    [90m  8| [39m[35mimport[39m { [33mThreatLevel[39m } [35mfrom[39m [32m'../../../AIMDS/src/types'[39m[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/verifier.test.ts[2m [ tests/unit/verifier.test.ts ][22m
+[31m[1mError[22m: Cannot find package 'lean-agentic' imported from '/workspaces/midstream/AIMDS/src/lean-agentic/verifier.ts'[39m
+[36m [2m❯[22m ../AIMDS/src/lean-agentic/verifier.ts:[2m6:1[22m[39m
+    [90m  4| [39m */[39m
+    [90m  5| [39m
+    [90m  6| [39m[35mimport[39m leanAgentic [35mfrom[39m [32m'lean-agentic'[39m[33m;[39m
+    [90m   | [39m[31m^[39m
+    [90m  7| [39m[35mimport[39m {
+    [90m  8| [39m  [33mSecurityPolicy[39m[33m,[39m
+[90m [2m❯[22m tests/unit/verifier.test.ts:[2m6:1[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/38]⎯[22m[39m
+
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 27 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/proxy.test.js[2m > [22mAIMDS Proxy[2m > [22mDetection Engine[2m > [22mshould detect prompt injection
+[31m[1mAssertionError[22m: expected 'critical' to be 'high' // Object.is equality[39m
+
+Expected: [32m"high"[39m
+Received: [31m"critical"[39m
+
+[36m [2m❯[22m tests/proxy.test.js:[2m70:31[22m[39m
+    [90m 68| [39m      [34mexpect[39m(result[33m.[39mthreats[33m.[39mlength)[33m.[39m[34mtoBeGreaterThan[39m([34m0[39m)[33m;[39m
+    [90m 69| [39m      expect(result.threats.some(t => t.type === 'pattern_match')).toB…
+    [90m 70| [39m      [34mexpect[39m(result[33m.[39mseverity)[33m.[39m[34mtoBe[39m([32m'high'[39m)[33m;[39m
+    [90m   | [39m                              [31m^[39m
+    [90m 71| [39m    })[33m;[39m
+    [90m 72| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/proxy.test.js[2m > [22mAIMDS Proxy[2m > [22mMitigation Strategies[2m > [22mBalanced Strategy[2m > [22mshould add warning to sanitized content
+[31m[1mAssertionError[22m: expected 'Test prompt' to contain '[SECURITY WARNING]'[39m
+
+Expected: [32m"[SECURITY WARNING]"[39m
+Received: [31m"Test prompt"[39m
+
+[36m [2m❯[22m tests/proxy.test.js:[2m194:31[22m[39m
+    [90m192| [39m        const result = await strategy.mitigateRequest(requestData, det…
+    [90m193| [39m
+    [90m194| [39m        [34mexpect[39m(result[33m.[39mprompt)[33m.[39m[34mtoContain[39m([32m'[SECURITY WARNING]'[39m)[33m;[39m
+    [90m   | [39m                              [31m^[39m
+    [90m195| [39m      })[33m;[39m
+    [90m196| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/proxy.test.js[2m > [22mAIMDS Proxy[2m > [22mMitigation Strategies[2m > [22mAggressive Strategy[2m > [22mshould strictly filter threats in aggressive mode
+[31m[1mAssertionError[22m: expected '\n\n[SECURITY NOTICE: This request ha…' to contain '[EMAIL REDACTED]'[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- [EMAIL REDACTED][39m
+[31m+[39m
+[31m+[39m
+[31m+ [SECURITY NOTICE: This request has been strictly filtered by AIMDS. 2 threats removed. Patterns blocked: none][39m
+[31m+[39m
+[31m+[39m
+
+[36m [2m❯[22m tests/proxy.test.js:[2m224:31[22m[39m
+    [90m222| [39m        const result = await strategy.mitigateRequest(requestData, det…
+    [90m223| [39m
+    [90m224| [39m        [34mexpect[39m(result[33m.[39mprompt)[33m.[39m[34mtoContain[39m([32m'[EMAIL REDACTED]'[39m)[33m;[39m
+    [90m   | [39m                              [31m^[39m
+    [90m225| [39m        [34mexpect[39m(result[33m.[39mprompt)[33m.[39m[34mtoContain[39m([32m'[SECURITY NOTICE]'[39m)[33m;[39m
+    [90m226| [39m      })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/proxy.test.js[2m > [22mAIMDS Proxy[2m > [22mError Handling[2m > [22mshould handle malformed detection results
+[31m[1mTypeError[22m: Cannot read properties of undefined (reading 'length')[39m
+[90m [2m❯[22m MitigationStrategy.mitigateRequest src/proxy/strategies/mitigation-strategy.js:[2m24:55[22m[39m
+[36m [2m❯[22m tests/proxy.test.js:[2m350:37[22m[39m
+    [90m348| [39m    [34mtest[39m([32m'should handle malformed detection results'[39m[33m,[39m [35masync[39m () [33m=>[39m {
+    [90m349| [39m      [35mconst[39m requestData [33m=[39m { prompt[33m:[39m [32m'test'[39m }[33m;[39m
+    [90m350| [39m      [35mconst[39m result [33m=[39m [35mawait[39m strategy[33m.[39m[34mmitigateRequest[39m(requestData[33m,[39m {})[33m;[39m
+    [90m   | [39m                                    [31m^[39m
+    [90m351| [39m      [34mexpect[39m(result)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m352| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/detectors/multimodal-detector.test.js[2m > [22mMultimodalDetector[2m > [22mAudio Attack Detection[2m > [22mshould detect audio perturbations
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m tests/detectors/multimodal-detector.test.js:[2m142:77[22m[39m
+    [90m140| [39m      [35mfor[39m ([35mconst[39m input [35mof[39m inputs) {
+    [90m141| [39m        [35mconst[39m threats [33m=[39m detector[33m.[39m[34mdetectAudioAttacks[39m(input)[33m;[39m
+    [90m142| [39m        expect(threats.some(t => t.subtype === 'adversarial_perturbati…
+    [90m   | [39m                                                                            [31m^[39m
+    [90m143| [39m      }
+    [90m144| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/detectors/neurosymbolic-detector.test.js[2m > [22mNeuroSymbolicDetector[2m > [22mMain Detection Method[2m > [22mshould measure detection time
+[31m[1mAssertionError[22m: expected 0 to be greater than 0[39m
+[36m [2m❯[22m tests/detectors/neurosymbolic-detector.test.js:[2m73:36[22m[39m
+    [90m 71| [39m      [35mconst[39m result [33m=[39m [35mawait[39m detector[33m.[39m[34mdetect[39m(input)[33m;[39m
+    [90m 72| [39m
+    [90m 73| [39m      [34mexpect[39m(result[33m.[39mdetectionTime)[33m.[39m[34mtoBeGreaterThan[39m([34m0[39m)[33m;[39m
+    [90m   | [39m                                   [31m^[39m
+    [90m 74| [39m      [34mexpect[39m(result[33m.[39mdetectionTime)[33m.[39m[34mtoBeLessThan[39m([34m100[39m)[33m;[39m
+    [90m 75| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/detectors/neurosymbolic-detector.test.js[2m > [22mNeuroSymbolicDetector[2m > [22mCross-Modal Attack Detection[2m > [22mshould detect hidden instructions in metadata
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m tests/detectors/neurosymbolic-detector.test.js:[2m96:86[22m[39m
+    [90m 94| [39m
+    [90m 95| [39m      [35mconst[39m result [33m=[39m [35mawait[39m detector[33m.[39m[34mdetect[39m(input[33m,[39m metadata)[33m;[39m
+    [90m 96| [39m      expect(result.threats.some(t => t.subtype === 'hidden_instructio…
+    [90m   | [39m                                                                                     [31m^[39m
+    [90m 97| [39m    })[33m;[39m
+    [90m 98| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/detectors/neurosymbolic-detector.test.js[2m > [22mNeuroSymbolicDetector[2m > [22mEmbedding Attack Detection[2m > [22mshould handle normal embeddings
+[31m[1mAssertionError[22m: expected [ { type: 'embedding_attack', …(5) } ] to have a length of +0 but got 1[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 0[39m
+[31m+ 1[39m
+
+[36m [2m❯[22m tests/detectors/neurosymbolic-detector.test.js:[2m181:73[22m[39m
+    [90m179| [39m
+    [90m180| [39m      [35mconst[39m result [33m=[39m [35mawait[39m detector[33m.[39m[34mdetect[39m([32m'benign text'[39m[33m,[39m metadata)[33m;[39m
+    [90m181| [39m      expect(result.threats.filter(t => t.type === 'embedding_attack')…
+    [90m   | [39m                                                                        [31m^[39m
+    [90m182| [39m    })[33m;[39m
+    [90m183| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/detectors/neurosymbolic-detector.test.js[2m > [22mNeuroSymbolicDetector[2m > [22mLogic-Based Jailbreak Detection[2m > [22mshould detect logical contradictions
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m tests/detectors/neurosymbolic-detector.test.js:[2m197:79[22m[39m
+    [90m195| [39m      [35mconst[39m result [33m=[39m [35mawait[39m detector[33m.[39m[34mdetect[39m(input)[33m;[39m
+    [90m196| [39m
+    [90m197| [39m      expect(result.threats.some(t => t.subtype === 'logical_contradic…
+    [90m   | [39m                                                                              [31m^[39m
+    [90m198| [39m    })[33m;[39m
+    [90m199| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/detectors/neurosymbolic-detector.test.js[2m > [22mNeuroSymbolicDetector[2m > [22mSeverity Calculation[2m > [22mshould return critical for highest severity
+[31m[1mAssertionError[22m: expected 'low' to be 'critical' // Object.is equality[39m
+
+Expected: [32m"critical"[39m
+Received: [31m"low"[39m
+
+[36m [2m❯[22m tests/detectors/neurosymbolic-detector.test.js:[2m242:31[22m[39m
+    [90m240| [39m
+    [90m241| [39m      [35mconst[39m result [33m=[39m [35mawait[39m detector[33m.[39m[34mdetect[39m(input[33m,[39m metadata)[33m;[39m
+    [90m242| [39m      [34mexpect[39m(result[33m.[39mseverity)[33m.[39m[34mtoBe[39m([32m'critical'[39m)[33m;[39m
+    [90m   | [39m                              [31m^[39m
+    [90m243| [39m    })[33m;[39m
+    [90m244| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/detectors/neurosymbolic-detector.test.js[2m > [22mNeuroSymbolicDetector[2m > [22mStatistics Tracking[2m > [22mshould update cross-modal attack stats
+[31m[1mAssertionError[22m: expected 0 to be greater than 0[39m
+[36m [2m❯[22m tests/detectors/neurosymbolic-detector.test.js:[2m335:39[22m[39m
+    [90m333| [39m      [35mconst[39m stats [33m=[39m detector[33m.[39m[34mgetStats[39m()[33m;[39m
+    [90m334| [39m
+    [90m335| [39m      [34mexpect[39m(stats[33m.[39mcrossModalAttacks)[33m.[39m[34mtoBeGreaterThan[39m([34m0[39m)[33m;[39m
+    [90m   | [39m                                      [31m^[39m
+    [90m336| [39m    })[33m;[39m
+    [90m337| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/detectors/neurosymbolic-detector.test.js[2m > [22mNeuroSymbolicDetector[2m > [22mEdge Cases[2m > [22mshould handle null metadata
+[31m[1mTypeError[22m: Cannot read properties of null (reading 'hasMultimodal')[39m
+[36m [2m❯[22m NeuroSymbolicDetector.detect src/proxy/detectors/neurosymbolic-detector.js:[2m46:45[22m[39m
+    [90m 44| [39m    [35mtry[39m {
+    [90m 45| [39m      [90m// 1. Cross-modal attack detection[39m
+    [90m 46| [39m      [35mif[39m ([35mthis[39m[33m.[39menableCrossModal [33m&&[39m metadata[33m.[39mhasMultimodal) {
+    [90m   | [39m                                            [31m^[39m
+    [90m 47| [39m        const crossModalThreats = await this.detectCrossModalAttacks(i…
+    [90m 48| [39m        threats[33m.[39m[34mpush[39m([33m...[39mcrossModalThreats)[33m;[39m
+[90m [2m❯[22m tests/detectors/neurosymbolic-detector.test.js:[2m383:37[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/security/injection-tests.test.js[2m > [22mSecurity Injection Tests[2m > [22mPrompt Injection Attacks[2m > [22mshould detect direct instruction override
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m tests/security/injection-tests.test.js:[2m40:33[22m[39m
+    [90m 38| [39m      [35mfor[39m ([35mconst[39m prompt [35mof[39m maliciousPrompts) {
+    [90m 39| [39m        [35mconst[39m result [33m=[39m [35mawait[39m neuroDetector[33m.[39m[34mdetect[39m(prompt)[33m;[39m
+    [90m 40| [39m        [34mexpect[39m(result[33m.[39misThreat)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m   | [39m                                [31m^[39m
+    [90m 41| [39m        [34mexpect[39m(result[33m.[39mseverity)[33m.[39m[34mtoMatch[39m([36m/high|critical/[39m)[33m;[39m
+    [90m 42| [39m      }
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/security/injection-tests.test.js[2m > [22mSecurity Injection Tests[2m > [22mPrompt Injection Attacks[2m > [22mshould detect role manipulation attempts
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m tests/security/injection-tests.test.js:[2m55:33[22m[39m
+    [90m 53| [39m      [35mfor[39m ([35mconst[39m attack [35mof[39m roleAttacks) {
+    [90m 54| [39m        [35mconst[39m result [33m=[39m [35mawait[39m neuroDetector[33m.[39m[34mdetect[39m(attack)[33m;[39m
+    [90m 55| [39m        [34mexpect[39m(result[33m.[39misThreat)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m   | [39m                                [31m^[39m
+    [90m 56| [39m      }
+    [90m 57| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/security/injection-tests.test.js[2m > [22mSecurity Injection Tests[2m > [22mPrompt Injection Attacks[2m > [22mshould detect context manipulation
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m tests/security/injection-tests.test.js:[2m69:33[22m[39m
+    [90m 67| [39m      [35mfor[39m ([35mconst[39m attack [35mof[39m attacks) {
+    [90m 68| [39m        [35mconst[39m result [33m=[39m [35mawait[39m neuroDetector[33m.[39m[34mdetect[39m(attack)[33m;[39m
+    [90m 69| [39m        [34mexpect[39m(result[33m.[39misThreat)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m   | [39m                                [31m^[39m
+    [90m 70| [39m      }
+    [90m 71| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/security/injection-tests.test.js[2m > [22mSecurity Injection Tests[2m > [22mPrompt Injection Attacks[2m > [22mshould detect encoded/obfuscated injections
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m tests/security/injection-tests.test.js:[2m83:33[22m[39m
+    [90m 81| [39m      [35mfor[39m ([35mconst[39m attack [35mof[39m obfuscated) {
+    [90m 82| [39m        [35mconst[39m result [33m=[39m [35mawait[39m neuroDetector[33m.[39m[34mdetect[39m(attack)[33m;[39m
+    [90m 83| [39m        [34mexpect[39m(result[33m.[39misThreat)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m   | [39m                                [31m^[39m
+    [90m 84| [39m      }
+    [90m 85| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[27/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/security/injection-tests.test.js[2m > [22mSecurity Injection Tests[2m > [22mPrompt Injection Attacks[2m > [22mshould detect multi-step injection
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m tests/security/injection-tests.test.js:[2m95:31[22m[39m
+    [90m 93| [39m
+    [90m 94| [39m      [35mconst[39m result [33m=[39m [35mawait[39m neuroDetector[33m.[39m[34mdetect[39m(multiStep)[33m;[39m
+    [90m 95| [39m      [34mexpect[39m(result[33m.[39misThreat)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m   | [39m                              [31m^[39m
+    [90m 96| [39m    })[33m;[39m
+    [90m 97| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[28/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/security/injection-tests.test.js[2m > [22mSecurity Injection Tests[2m > [22mLogic-Based Jailbreaks[2m > [22mshould detect syllogistic manipulation
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m tests/security/injection-tests.test.js:[2m109:78[22m[39m
+    [90m107| [39m      [35mfor[39m ([35mconst[39m attack [35mof[39m attacks) {
+    [90m108| [39m        [35mconst[39m result [33m=[39m [35mawait[39m neuroDetector[33m.[39m[34mdetect[39m(attack)[33m;[39m
+    [90m109| [39m        expect(result.threats.some(t => t.type === 'logic_based_jailbr…
+    [90m   | [39m                                                                             [31m^[39m
+    [90m110| [39m      }
+    [90m111| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[29/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/security/injection-tests.test.js[2m > [22mSecurity Injection Tests[2m > [22mLogic-Based Jailbreaks[2m > [22mshould detect logical contradictions
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m tests/security/injection-tests.test.js:[2m122:33[22m[39m
+    [90m120| [39m      [35mfor[39m ([35mconst[39m attack [35mof[39m attacks) {
+    [90m121| [39m        [35mconst[39m result [33m=[39m [35mawait[39m neuroDetector[33m.[39m[34mdetect[39m(attack)[33m;[39m
+    [90m122| [39m        [34mexpect[39m(result[33m.[39misThreat)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m   | [39m                                [31m^[39m
+    [90m123| [39m      }
+    [90m124| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[30/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/security/injection-tests.test.js[2m > [22mSecurity Injection Tests[2m > [22mLogic-Based Jailbreaks[2m > [22mshould detect conditional bypass attempts
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m tests/security/injection-tests.test.js:[2m135:33[22m[39m
+    [90m133| [39m      [35mfor[39m ([35mconst[39m attack [35mof[39m attacks) {
+    [90m134| [39m        [35mconst[39m result [33m=[39m [35mawait[39m neuroDetector[33m.[39m[34mdetect[39m(attack)[33m;[39m
+    [90m135| [39m        [34mexpect[39m(result[33m.[39misThreat)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m   | [39m                                [31m^[39m
+    [90m136| [39m      }
+    [90m137| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[31/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/security/injection-tests.test.js[2m > [22mSecurity Injection Tests[2m > [22mKnowledge Graph Attacks[2m > [22mshould detect relationship poisoning
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m tests/security/injection-tests.test.js:[2m169:12[22m[39m
+    [90m167| [39m        [34mexpect[39m(result[33m.[39mthreats[33m.[39m[34msome[39m(t [33m=>[39m
+    [90m168| [39m          t[33m.[39mtype [33m===[39m [32m'knowledge_graph_attack'[39m
+    [90m169| [39m        ))[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m   | [39m           [31m^[39m
+    [90m170| [39m      }
+    [90m171| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[32/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/security/injection-tests.test.js[2m > [22mSecurity Injection Tests[2m > [22mCross-Modal Attacks[2m > [22mshould detect hidden instructions in image metadata
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m tests/security/injection-tests.test.js:[2m219:10[22m[39m
+    [90m217| [39m      [34mexpect[39m(result[33m.[39mthreats[33m.[39m[34msome[39m(t [33m=>[39m
+    [90m218| [39m        t[33m.[39msubtype [33m===[39m [32m'hidden_instructions_in_image'[39m
+    [90m219| [39m      ))[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m   | [39m         [31m^[39m
+    [90m220| [39m    })[33m;[39m
+    [90m221| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[33/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/security/injection-tests.test.js[2m > [22mSecurity Injection Tests[2m > [22mMultimodal Specific Attacks[2m > [22mshould detect audio adversarial perturbations
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m tests/security/injection-tests.test.js:[2m333:75[22m[39m
+    [90m331| [39m      [35mconst[39m threats [33m=[39m multimodalDetector[33m.[39m[34mdetectAudioAttacks[39m(input)[33m;[39m
+    [90m332| [39m
+    [90m333| [39m      expect(threats.some(t => t.subtype === 'adversarial_perturbation…
+    [90m   | [39m                                                                          [31m^[39m
+    [90m334| [39m    })[33m;[39m
+    [90m335| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[34/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/security/injection-tests.test.js[2m > [22mSecurity Injection Tests[2m > [22mRace Conditions and Concurrency[2m > [22mshould maintain state consistency under concurrent load
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m tests/security/injection-tests.test.js:[2m445:37[22m[39m
+    [90m443| [39m      [90m// Malicious requests (even indices) should all be threats[39m
+    [90m444| [39m      [35mfor[39m ([35mlet[39m i [33m=[39m [34m0[39m[33m;[39m i [33m<[39m [34m100[39m[33m;[39m i [33m+=[39m [34m2[39m) {
+    [90m445| [39m        [34mexpect[39m(results[i][33m.[39misThreat)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m   | [39m                                    [31m^[39m
+    [90m446| [39m      }
+    [90m447| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[35/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/security/injection-tests.test.js[2m > [22mSecurity Injection Tests[2m > [22mRace Conditions and Concurrency[2m > [22mshould not leak data between concurrent requests
+[31m[1mAssertionError[22m: expected false not to be false // Object.is equality[39m
+[36m [2m❯[22m tests/security/injection-tests.test.js:[2m463:36[22m[39m
+    [90m461| [39m
+    [90m462| [39m      [90m// Results should be independent[39m
+    [90m463| [39m      [34mexpect[39m(result1[33m.[39misThreat)[33m.[39mnot[33m.[39m[34mtoBe[39m(result2[33m.[39misThreat)[33m;[39m
+    [90m   | [39m                                   [31m^[39m
+    [90m464| [39m    })[33m;[39m
+    [90m465| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[36/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/security/injection-tests.test.js[2m > [22mSecurity Injection Tests[2m > [22mAuthorization and Access Control[2m > [22mshould detect privilege escalation attempts
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m tests/security/injection-tests.test.js:[2m478:33[22m[39m
+    [90m476| [39m      [35mfor[39m ([35mconst[39m attack [35mof[39m attacks) {
+    [90m477| [39m        [35mconst[39m result [33m=[39m [35mawait[39m neuroDetector[33m.[39m[34mdetect[39m(attack)[33m;[39m
+    [90m478| [39m        [34mexpect[39m(result[33m.[39misThreat)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m   | [39m                                [31m^[39m
+    [90m479| [39m      }
+    [90m480| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[37/38]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/security/injection-tests.test.js[2m > [22mSecurity Injection Tests[2m > [22mAuthorization and Access Control[2m > [22mshould detect authentication bypass attempts
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m tests/security/injection-tests.test.js:[2m492:33[22m[39m
+    [90m490| [39m      [35mfor[39m ([35mconst[39m attack [35mof[39m attacks) {
+    [90m491| [39m        [35mconst[39m result [33m=[39m [35mawait[39m neuroDetector[33m.[39m[34mdetect[39m(attack)[33m;[39m
+    [90m492| [39m        [34mexpect[39m(result[33m.[39misThreat)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m   | [39m                                [31m^[39m
+    [90m493| [39m      }
+    [90m494| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[38/38]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m15 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (17)[39m
+[2m      Tests [22m [1m[31m27 failed[39m[22m[2m | [22m[1m[32m189 passed[39m[22m[90m (216)[39m
+[2m   Start at [22m 22:59:55
+[2m   Duration [22m 1.05s[2m (transform 1.11s, setup 0ms, collect 849ms, tests 316ms, environment 7ms, prepare 269ms)[22m
+
