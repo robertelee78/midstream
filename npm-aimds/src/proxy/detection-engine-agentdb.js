@@ -11,6 +11,7 @@
 
 const crypto = require('crypto');
 const { createVectorStore, createEmbeddingProvider } = require('../intelligence');
+const { PatternCache } = require('./pattern-cache');
 
 class DetectionEngineAgentDB {
   constructor(options = {}) {
@@ -18,6 +19,14 @@ class DetectionEngineAgentDB {
     this.enablePII = options.enablePII !== false;
     this.enableJailbreak = options.enableJailbreak !== false;
     this.enablePatternMatching = options.enablePatternMatching !== false;
+
+    // Pattern Cache configuration (AI Defence 2.0)
+    const cacheConfig = options.cache || {};
+    this.patternCache = new PatternCache(
+      cacheConfig.maxSize || 10000,
+      cacheConfig.ttl || 3600000 // 1 hour default
+    );
+    this.enableCache = cacheConfig.enabled !== false;
 
     // AgentDB configuration
     this.config = {
@@ -35,6 +44,11 @@ class DetectionEngineAgentDB {
           type: 'scalar',
           bits: 8
         }
+      },
+      cache: {
+        enabled: this.enableCache,
+        maxSize: cacheConfig.maxSize || 10000,
+        ttl: cacheConfig.ttl || 3600000
       }
     };
 
@@ -102,7 +116,7 @@ class DetectionEngineAgentDB {
   }
 
   /**
-   * Main detection method with AgentDB vector search
+   * Main detection method with Pattern Cache and AgentDB vector search
    */
   async detect(content, options = {}) {
     if (!this.initialized) {
@@ -110,6 +124,20 @@ class DetectionEngineAgentDB {
     }
 
     const startTime = process.hrtime.bigint();
+
+    // Check pattern cache first (fastest path)
+    if (this.enableCache) {
+      const cached = this.patternCache.get(content);
+      if (cached) {
+        return {
+          ...cached,
+          cacheHit: true,
+          detectionMethod: 'cache',
+          detectionTime: Number(process.hrtime.bigint() - startTime) / 1_000_000
+        };
+      }
+    }
+
     const threats = [];
     let maxSeverity = 'low';
     let detectionMethod = 'traditional';
@@ -167,17 +195,26 @@ class DetectionEngineAgentDB {
 
       this.stats.avgSearchTime = this.stats.totalDetectionTime / this.stats.totalDetections;
 
-      return {
+      const result = {
         threats,
         severity: maxSeverity,
         shouldBlock,
         detectionTime: detectionTimeMs,
         detectionMethod,
         agentdbEnabled: this.config.agentdb.enabled,
+        cacheEnabled: this.enableCache,
+        cacheHit: false,
         contentHash: this.hashContent(content),
         timestamp: new Date().toISOString(),
         metadata: options.metadata || {},
       };
+
+      // Store in cache for future requests
+      if (this.enableCache) {
+        this.patternCache.set(content, result);
+      }
+
+      return result;
 
     } catch (error) {
       console.error('Detection engine error:', error);
@@ -564,14 +601,17 @@ class DetectionEngineAgentDB {
   }
 
   /**
-   * Get comprehensive performance statistics
+   * Get comprehensive performance statistics including cache metrics
    */
   getStats() {
     const vectorSearchPercentage = this.stats.totalDetections > 0
       ? (this.stats.vectorSearchDetections / this.stats.totalDetections * 100).toFixed(2)
       : 0;
 
+    const cacheStats = this.patternCache.stats();
+
     return {
+      // Detection stats
       totalDetections: this.stats.totalDetections,
       vectorSearchDetections: this.stats.vectorSearchDetections,
       traditionalDetections: this.stats.traditionalDetections,
@@ -583,10 +623,47 @@ class DetectionEngineAgentDB {
       traditionalAvg: this.stats.traditionalDetections > 0
         ? (this.stats.traditionalDetectionTime / this.stats.traditionalDetections).toFixed(3)
         : 0,
+
+      // Configuration
       agentdbEnabled: this.config.agentdb.enabled,
+      cacheEnabled: this.enableCache,
       errors: this.stats.errors,
       threshold: this.threshold,
+
+      // Cache metrics
+      cache: {
+        enabled: this.enableCache,
+        hitRate: cacheStats.hitRate,
+        hits: cacheStats.hits,
+        misses: cacheStats.misses,
+        size: cacheStats.size,
+        maxSize: cacheStats.maxSize,
+        memoryUsageMB: cacheStats.memoryUsageMB,
+        evictions: cacheStats.evictions,
+        expirations: cacheStats.expirations
+      }
     };
+  }
+
+  /**
+   * Get detailed cache performance report
+   */
+  getCacheReport() {
+    return this.patternCache.getPerformanceReport();
+  }
+
+  /**
+   * Clear pattern cache
+   */
+  clearCache() {
+    this.patternCache.clear();
+  }
+
+  /**
+   * Prune expired cache entries
+   */
+  pruneCache() {
+    return this.patternCache.prune();
   }
 
   /**

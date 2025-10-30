@@ -1,96 +1,96 @@
 {
-  "timestamp": "2025-10-30T01:04:33.955Z",
+  "timestamp": "2025-10-30T02:33:13.016Z",
   "system": {
     "cpus": 8,
     "platform": "linux",
     "arch": "x64",
     "nodeVersion": "v22.17.0",
     "totalMemory": 33657851904,
-    "freeMemory": 19184513024
+    "freeMemory": 18702045184
   },
   "target": 750000,
   "workers": 8,
-  "totalRequests": 5678486,
-  "totalThreats": 2129435,
-  "duration": "10.82",
-  "reqPerSec": 524813,
-  "targetAchievement": "69.98",
+  "totalRequests": 5442424,
+  "totalThreats": 2040910,
+  "duration": "10.69",
+  "reqPerSec": 509208,
+  "targetAchievement": "67.89",
   "passed": false,
-  "avgLatency": "0.0138",
-  "p95Latency": "0.0133",
-  "p99Latency": "0.0326",
+  "avgLatency": "0.0144",
+  "p95Latency": "0.0137",
+  "p99Latency": "0.0336",
   "workerResults": [
     {
       "workerId": 0,
-      "count": 698506,
-      "threatsDetected": 261940,
-      "duration": 10.000032647,
-      "avgLatency": 0.01402868592252593,
-      "p95Latency": 0.013415000000009059,
-      "p99Latency": 0.03223000000070897
+      "count": 637167,
+      "threatsDetected": 238938,
+      "duration": 10.000057213,
+      "avgLatency": 0.015362509690551867,
+      "p95Latency": 0.013676000000486965,
+      "p99Latency": 0.03330200000004879
     },
     {
       "workerId": 1,
-      "count": 692005,
-      "threatsDetected": 259502,
-      "duration": 10.003113757,
-      "avgLatency": 0.014182190374348784,
-      "p95Latency": 0.013405000000147993,
-      "p99Latency": 0.03297199999997247
+      "count": 684517,
+      "threatsDetected": 256694,
+      "duration": 10.000027657,
+      "avgLatency": 0.014276341299047311,
+      "p95Latency": 0.013645000000451546,
+      "p99Latency": 0.033262000000831904
     },
     {
       "workerId": 2,
-      "count": 723716,
-      "threatsDetected": 271394,
-      "duration": 10.000026458,
-      "avgLatency": 0.013516254862403258,
-      "p95Latency": 0.013324999999895226,
-      "p99Latency": 0.03254999999990105
+      "count": 683721,
+      "threatsDetected": 256395,
+      "duration": 10.000032521,
+      "avgLatency": 0.014349834711820185,
+      "p95Latency": 0.013814999999794964,
+      "p99Latency": 0.0337130000000343
     },
     {
       "workerId": 3,
-      "count": 701727,
-      "threatsDetected": 263148,
-      "duration": 10.000071568,
-      "avgLatency": 0.01395994585358631,
-      "p95Latency": 0.013334999999642605,
-      "p99Latency": 0.03252099999917846
+      "count": 717432,
+      "threatsDetected": 269037,
+      "duration": 10.000031858,
+      "avgLatency": 0.01366710650207873,
+      "p95Latency": 0.013154000000213273,
+      "p99Latency": 0.03324199999951816
     },
     {
       "workerId": 4,
-      "count": 706924,
-      "threatsDetected": 265097,
-      "duration": 10.00004143,
-      "avgLatency": 0.013884553237688356,
-      "p95Latency": 0.013214000000061787,
-      "p99Latency": 0.032601000000113345
+      "count": 709089,
+      "threatsDetected": 265908,
+      "duration": 10.000031534,
+      "avgLatency": 0.013817466234845503,
+      "p95Latency": 0.014016000000083295,
+      "p99Latency": 0.03375199999999268
     },
     {
       "workerId": 5,
-      "count": 714799,
-      "threatsDetected": 268050,
-      "duration": 10.000033605,
-      "avgLatency": 0.013690589701440525,
-      "p95Latency": 0.013284999999996217,
-      "p99Latency": 0.03273100000114937
+      "count": 669126,
+      "threatsDetected": 250923,
+      "duration": 10.000038837999998,
+      "avgLatency": 0.01463359022964299,
+      "p95Latency": 0.014105999999628693,
+      "p99Latency": 0.034473999998226645
     },
     {
       "workerId": 6,
-      "count": 721261,
-      "threatsDetected": 270473,
-      "duration": 10.000421464999999,
-      "avgLatency": 0.013588596229381545,
-      "p95Latency": 0.013305000000400469,
-      "p99Latency": 0.03253099999983533
+      "count": 696970,
+      "threatsDetected": 261364,
+      "duration": 10.000025779000001,
+      "avgLatency": 0.014045890184655817,
+      "p95Latency": 0.01344499999868276,
+      "p99Latency": 0.03285200000027544
     },
     {
       "workerId": 7,
-      "count": 719548,
-      "threatsDetected": 269831,
-      "duration": 10.000035574,
-      "avgLatency": 0.013644126747624616,
-      "p95Latency": 0.013514999999983957,
-      "p99Latency": 0.03294199999982084
+      "count": 644402,
+      "threatsDetected": 241651,
+      "duration": 10.000037101,
+      "avgLatency": 0.015233182159583455,
+      "p95Latency": 0.013576000000284694,
+      "p99Latency": 0.03392299999995885
     }
   ]
 }
