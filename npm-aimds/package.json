@@ -53,7 +53,12 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "test:agentdb": "vitest run tests/integration/agentdb-integration.test.js",
     "benchmark": "node benchmarks/detection-bench.js",
+    "migrate-patterns": "node scripts/migrate-patterns.js",
+    "generate-variations": "node scripts/generate-pattern-variations.js",
+    "init-agentdb": "npm run migrate-patterns && npm run generate-variations",
+    "agentdb:status": "node -e \"const {createVectorStore}=require('./src/intelligence');createVectorStore({dbPath:'./data/threats.db'}).then(async v=>{console.log(await v.getMetrics());await v.close()})\"",
     "lint": "echo 'Lint checking...'",
     "format": "prettier --write 'src/**/*.js' 'tests/**/*.js'",
     "typecheck": "tsc --noEmit"
