@@ -14,6 +14,9 @@
 mod rules;
 mod spacing;
 
+#[cfg(feature = "pyo3")]
+mod python_bindings;
+
 pub use rules::TransformRule;
 use rules::STATIC_MAPPINGS;
 
