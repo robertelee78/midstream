@@ -219,6 +219,61 @@ pub static STATIC_MAPPINGS: Lazy<HashMap<&'static str, TransformRule>> = Lazy::n
     map.insert("control t", TransformRule::new("<KEY:ctrl-t>", false));  // Transpose characters
 
     // ========================================
+    // SUPER/MOD4 KEY COMBINATIONS (Sway/i3 window management)
+    // ========================================
+    // Arrow key navigation - focus windows
+    map.insert("super left", TransformRule::new("<KEY:super-Left>", false));   // Focus left window
+    map.insert("super right", TransformRule::new("<KEY:super-Right>", false)); // Focus right window
+    map.insert("super up", TransformRule::new("<KEY:super-Up>", false));       // Focus up window
+    map.insert("super down", TransformRule::new("<KEY:super-Down>", false));   // Focus down window
+
+    // Workspace switching (1-10)
+    map.insert("super one", TransformRule::new("<KEY:super-1>", false));
+    map.insert("super two", TransformRule::new("<KEY:super-2>", false));
+    map.insert("super three", TransformRule::new("<KEY:super-3>", false));
+    map.insert("super four", TransformRule::new("<KEY:super-4>", false));
+    map.insert("super five", TransformRule::new("<KEY:super-5>", false));
+    map.insert("super six", TransformRule::new("<KEY:super-6>", false));
+    map.insert("super seven", TransformRule::new("<KEY:super-7>", false));
+    map.insert("super eight", TransformRule::new("<KEY:super-8>", false));
+    map.insert("super nine", TransformRule::new("<KEY:super-9>", false));
+    map.insert("super zero", TransformRule::new("<KEY:super-0>", false));
+
+    // Move windows (Super+Shift+arrows)
+    map.insert("super shift left", TransformRule::new("<KEY:super-shift-Left>", false));   // Move window left
+    map.insert("super shift right", TransformRule::new("<KEY:super-shift-Right>", false)); // Move window right
+    map.insert("super shift up", TransformRule::new("<KEY:super-shift-Up>", false));       // Move window up
+    map.insert("super shift down", TransformRule::new("<KEY:super-shift-Down>", false));   // Move window down
+
+    // Move to workspace (Super+Shift+number)
+    map.insert("super shift one", TransformRule::new("<KEY:super-shift-1>", false));
+    map.insert("super shift two", TransformRule::new("<KEY:super-shift-2>", false));
+    map.insert("super shift three", TransformRule::new("<KEY:super-shift-3>", false));
+    map.insert("super shift four", TransformRule::new("<KEY:super-shift-4>", false));
+    map.insert("super shift five", TransformRule::new("<KEY:super-shift-5>", false));
+    map.insert("super shift six", TransformRule::new("<KEY:super-shift-6>", false));
+    map.insert("super shift seven", TransformRule::new("<KEY:super-shift-7>", false));
+    map.insert("super shift eight", TransformRule::new("<KEY:super-shift-8>", false));
+    map.insert("super shift nine", TransformRule::new("<KEY:super-shift-9>", false));
+    map.insert("super shift zero", TransformRule::new("<KEY:super-shift-0>", false));
+
+    // Layout commands
+    map.insert("super h", TransformRule::new("<KEY:super-h>", false));      // Horizontal split
+    map.insert("super v", TransformRule::new("<KEY:super-v>", false));      // Vertical split
+    map.insert("super s", TransformRule::new("<KEY:super-s>", false));      // Stacking layout
+    map.insert("super w", TransformRule::new("<KEY:super-w>", false));      // Tabbed layout
+    map.insert("super e", TransformRule::new("<KEY:super-e>", false));      // Toggle split
+    map.insert("super f", TransformRule::new("<KEY:super-f>", false));      // Fullscreen
+
+    // Floating and misc
+    map.insert("super shift space", TransformRule::new("<KEY:super-shift-space>", false)); // Toggle floating
+    map.insert("super space", TransformRule::new("<KEY:super-space>", false));             // Focus mode toggle
+    map.insert("super a", TransformRule::new("<KEY:super-a>", false));                     // Focus parent
+    map.insert("super shift q", TransformRule::new("<KEY:super-shift-q>", false));         // Kill window
+    map.insert("super shift c", TransformRule::new("<KEY:super-shift-c>", false));         // Reload config
+    map.insert("super shift e", TransformRule::new("<KEY:super-shift-e>", false));         // Exit sway
+
+    // ========================================
     // WHITESPACE CONTROL
     // ========================================
     map.insert("no space", TransformRule::new("", false));
