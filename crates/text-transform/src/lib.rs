@@ -167,6 +167,21 @@ struct QuoteState {
 
 /// Apply transformation with quote state tracking
 fn apply_rule_with_state(result: &mut String, rule: &TransformRule, state: &mut QuoteState) {
+    // Special handling for keyboard actions: attach without spaces
+    let is_key_action = rule.replacement.starts_with("<KEY:");
+
+    if is_key_action {
+        // Keyboard actions: remove trailing space and attach directly
+        // This ensures "backspace backspace" → "<KEY:BackSpace><KEY:BackSpace>" (no spaces)
+        // The daemon's _inject_text_with_keys() will parse and execute each key separately
+        if result.ends_with(' ') {
+            result.pop();
+        }
+        result.push_str(rule.replacement);
+        // Don't add space after - let multiple keys concatenate directly
+        return;
+    }
+
     if rule.attach_to_prev {
         // Remove trailing space if present, then attach
         // Used for punctuation like "," and "." (and "dot" in compact mode)
