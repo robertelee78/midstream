@@ -328,6 +328,14 @@ mod tests {
     }
 
     #[test]
+    fn test_brackets_plural() {
+        // Test plural forms (common in natural speech)
+        assert_eq!(transform("open parentheses x close parentheses"), "(x)");
+        assert_eq!(transform("open brackets a close brackets"), "[a]");
+        assert_eq!(transform("open braces b close braces"), "{b}");
+    }
+
+    #[test]
     fn test_programming() {
         assert_eq!(transform("git commit hyphen m"), "git commit -m");
         assert_eq!(transform("if x double equals y"), "if x == y");

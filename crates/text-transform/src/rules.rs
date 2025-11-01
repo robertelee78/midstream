@@ -71,10 +71,13 @@ pub static STATIC_MAPPINGS: Lazy<HashMap<&'static str, TransformRule>> = Lazy::n
     // ========================================
     map.insert("open paren", TransformRule::opening("("));
     map.insert("open parenthesis", TransformRule::opening("("));
+    map.insert("open parentheses", TransformRule::opening("("));  // Plural variant
     map.insert("left paren", TransformRule::opening("("));
     map.insert("open bracket", TransformRule::opening("["));
+    map.insert("open brackets", TransformRule::opening("["));  // Plural variant
     map.insert("left bracket", TransformRule::opening("["));
     map.insert("open brace", TransformRule::opening("{"));
+    map.insert("open braces", TransformRule::opening("{"));  // Plural variant
     map.insert("left brace", TransformRule::opening("{"));
     map.insert("open angle bracket", TransformRule::opening("<"));
     map.insert("left angle", TransformRule::opening("<"));
@@ -84,10 +87,13 @@ pub static STATIC_MAPPINGS: Lazy<HashMap<&'static str, TransformRule>> = Lazy::n
     // ========================================
     map.insert("close paren", TransformRule::new(")", true));
     map.insert("close parenthesis", TransformRule::new(")", true));
+    map.insert("close parentheses", TransformRule::new(")", true));  // Plural variant
     map.insert("right paren", TransformRule::new(")", true));
     map.insert("close bracket", TransformRule::new("]", true));
+    map.insert("close brackets", TransformRule::new("]", true));  // Plural variant
     map.insert("right bracket", TransformRule::new("]", true));
     map.insert("close brace", TransformRule::new("}", true));
+    map.insert("close braces", TransformRule::new("}", true));  // Plural variant
     map.insert("right brace", TransformRule::new("}", true));
     map.insert("close angle bracket", TransformRule::new(">", true));
     map.insert("right angle", TransformRule::new(">", true));
