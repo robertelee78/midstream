@@ -75,7 +75,7 @@ fn test_numbers_in_arrays() {
 fn test_numbers_with_punctuation() {
     assert_eq!(transform("one comma two comma three"), "1, 2, 3");
     assert_eq!(transform("count equals five period"), "count = 5.");
-    assert_eq!(transform("value open paren ten close paren"), "value (10)");
+    assert_eq!(transform("value open paren ten close paren"), "value(10)");  // No space before ( after identifier
 }
 
 #[test]

@@ -100,7 +100,7 @@ fn test_logical_operators() {
 
 #[test]
 fn test_symbols_basic() {
-    assert_eq!(transform("snake underscore case"), "snake _ case");
+    assert_eq!(transform("snake underscore case"), "snake_case");  // Compact underscore for identifiers
     assert_eq!(transform("user at sign example"), "user @ example");
     assert_eq!(transform("user at example"), "user @ example");
 }
@@ -199,7 +199,7 @@ fn test_sentence_flow() {
 fn test_mixed_content() {
     assert_eq!(
         transform("The value open paren x plus y close paren equals z period"),
-        "The value (x + y) = z."
+        "The value(x + y) = z."  // No space before ( after identifier
     );
 }
 

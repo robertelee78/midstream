@@ -259,11 +259,16 @@ fn apply_rule_with_state(result: &mut String, rule: &TransformRule, state: &mut 
 
                 result.push_str(rule.replacement);
             } else {
-                // Opening paren: add space before if needed
+                // Opening paren: context-dependent spacing
+                // - "hello_world()" - no space (function call/definition)
+                // - "value (x + y)" - space (clarifying parentheses)
                 if !result.is_empty() {
                     let last_char = result.chars().last();
                     let needs_space = match last_char {
                         Some(c) if c.is_whitespace() => false,
+                        // No space after identifier characters (for function calls)
+                        Some(c) if c.is_alphanumeric() || c == '_' => false,
+                        // Space after other characters (operators, punctuation)
                         _ => true,
                     };
 

@@ -134,7 +134,8 @@ pub static STATIC_MAPPINGS: Lazy<HashMap<&'static str, TransformRule>> = Lazy::n
     // ========================================
     // SYMBOLS (attach_to_prev = false)
     // ========================================
-    map.insert("underscore", TransformRule::new("_", false));
+    // underscore is compact (no spaces) for snake_case identifiers
+    map.insert("underscore", TransformRule::compact("_"));
     map.insert("at sign", TransformRule::new("@", false));
     map.insert("at", TransformRule::new("@", false));
     map.insert("hash", TransformRule::new("#", false));
