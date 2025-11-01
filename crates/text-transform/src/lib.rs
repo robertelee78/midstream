@@ -16,7 +16,6 @@ mod spacing;
 
 pub use rules::TransformRule;
 use rules::STATIC_MAPPINGS;
-use spacing::SpacingContext;
 
 /// Transform text by replacing verbal punctuation with actual symbols.
 ///
@@ -48,97 +47,79 @@ use spacing::SpacingContext;
 /// ```
 pub fn transform(text: &str) -> String {
     let words: Vec<&str> = text.split_whitespace().collect();
-    let mut result = String::with_capacity(text.len()); // Pre-allocate
+    let mut result = String::with_capacity(text.len() + 20); // Pre-allocate with buffer
     let mut i = 0;
     let mut quote_state = QuoteState::default();
     let mut last_rule_no_space_after = false;
     let mut last_rule_is_opening = false;
 
+    // Pre-lowercase all words once to avoid repeated allocations
+    let words_lower: Vec<String> = words.iter().map(|w| w.to_lowercase()).collect();
+
+    // Reusable buffer for pattern matching keys
+    let mut key_buf = String::with_capacity(50);
+
     while i < words.len() {
-        let word_lower = words[i].to_lowercase();
+        // Check for multi-word patterns first (longest to shortest: 4, 3, 2 words)
+        let mut matched = false;
 
-        // Check for multi-word patterns first (2-4 words)
-        let matched = if i + 3 < words.len() {
-            // 4-word patterns (e.g., "less than or equal")
-            let four_word = format!("{} {} {} {}",
-                word_lower,
-                words[i+1].to_lowercase(),
-                words[i+2].to_lowercase(),
-                words[i+3].to_lowercase()
-            );
+        // Try 4-word pattern
+        if i + 3 < words.len() {
+            key_buf.clear();
+            key_buf.push_str(&words_lower[i]);
+            key_buf.push(' ');
+            key_buf.push_str(&words_lower[i+1]);
+            key_buf.push(' ');
+            key_buf.push_str(&words_lower[i+2]);
+            key_buf.push(' ');
+            key_buf.push_str(&words_lower[i+3]);
 
-            if let Some(rule) = STATIC_MAPPINGS.get(four_word.as_str()) {
+            if let Some(rule) = STATIC_MAPPINGS.get(key_buf.as_str()) {
                 apply_rule_with_state(&mut result, rule, &mut quote_state);
                 last_rule_no_space_after = rule.no_space_after;
                 last_rule_is_opening = rule.is_opening;
                 i += 4;
-                true
-            } else if i + 2 < words.len() {
-                // 3-word patterns
-                let three_word = format!("{} {} {}",
-                    word_lower,
-                    words[i+1].to_lowercase(),
-                    words[i+2].to_lowercase()
-                );
-
-                if let Some(rule) = STATIC_MAPPINGS.get(three_word.as_str()) {
-                    apply_rule_with_state(&mut result, rule, &mut quote_state);
-                    last_rule_no_space_after = rule.no_space_after;
-                    last_rule_is_opening = rule.is_opening;
-                    i += 3;
-                    true
-                } else if i + 1 < words.len() {
-                    // 2-word patterns
-                    let two_word = format!("{} {}", word_lower, words[i+1].to_lowercase());
-
-                    if let Some(rule) = STATIC_MAPPINGS.get(two_word.as_str()) {
-                        apply_rule_with_state(&mut result, rule, &mut quote_state);
-                        last_rule_no_space_after = rule.no_space_after;
-                        last_rule_is_opening = rule.is_opening;
-                        i += 2;
-                        true
-                    } else {
-                        false
-                    }
-                }
-                else {
-                    false
-                }
-            } else if i + 1 < words.len() {
-                // 2-word patterns
-                let two_word = format!("{} {}", word_lower, words[i+1].to_lowercase());
-
-                if let Some(rule) = STATIC_MAPPINGS.get(two_word.as_str()) {
-                    apply_rule_with_state(&mut result, rule, &mut quote_state);
-                    last_rule_no_space_after = rule.no_space_after;
-                    i += 2;
-                    true
-                } else {
-                    false
-                }
-            } else {
-                false
+                matched = true;
             }
-        } else if i + 1 < words.len() {
-            // 2-word patterns
-            let two_word = format!("{} {}", word_lower, words[i+1].to_lowercase());
+        }
 
-            if let Some(rule) = STATIC_MAPPINGS.get(two_word.as_str()) {
+        // Try 3-word pattern
+        if !matched && i + 2 < words.len() {
+            key_buf.clear();
+            key_buf.push_str(&words_lower[i]);
+            key_buf.push(' ');
+            key_buf.push_str(&words_lower[i+1]);
+            key_buf.push(' ');
+            key_buf.push_str(&words_lower[i+2]);
+
+            if let Some(rule) = STATIC_MAPPINGS.get(key_buf.as_str()) {
+                apply_rule_with_state(&mut result, rule, &mut quote_state);
+                last_rule_no_space_after = rule.no_space_after;
+                last_rule_is_opening = rule.is_opening;
+                i += 3;
+                continue;
+            }
+        }
+
+        // Try 2-word pattern
+        if !matched && i + 1 < words.len() {
+            key_buf.clear();
+            key_buf.push_str(&words_lower[i]);
+            key_buf.push(' ');
+            key_buf.push_str(&words_lower[i+1]);
+
+            if let Some(rule) = STATIC_MAPPINGS.get(key_buf.as_str()) {
                 apply_rule_with_state(&mut result, rule, &mut quote_state);
                 last_rule_no_space_after = rule.no_space_after;
                 last_rule_is_opening = rule.is_opening;
                 i += 2;
-                true
-            } else {
-                false
+                continue;
             }
-        } else {
-            false
-        };
+        }
 
         if !matched {
             // Single word pattern or pass-through
-            if let Some(rule) = STATIC_MAPPINGS.get(word_lower.as_str()) {
+            if let Some(rule) = STATIC_MAPPINGS.get(words_lower[i].as_str()) {
                 apply_rule_with_state(&mut result, rule, &mut quote_state);
                 last_rule_no_space_after = rule.no_space_after;
                 last_rule_is_opening = rule.is_opening;
@@ -181,11 +162,6 @@ struct QuoteState {
     backtick_open: bool,
 }
 
-/// Apply a transformation rule with proper spacing context
-fn apply_rule(result: &mut String, rule: &TransformRule) {
-    apply_rule_with_state(result, rule, &mut QuoteState::default());
-}
-
 /// Apply transformation with quote state tracking
 fn apply_rule_with_state(result: &mut String, rule: &TransformRule, state: &mut QuoteState) {
     if rule.attach_to_prev {
@@ -197,24 +173,30 @@ fn apply_rule_with_state(result: &mut String, rule: &TransformRule, state: &mut 
         result.push_str(rule.replacement);
         // no_space_after is handled by the flag, not here
     } else if rule.is_opening {
-        // Quotes and backticks: check if opening or closing based on state
-        let is_actually_closing = match rule.replacement {
-            "\"" => {
-                let closing = state.double_quote_open;
-                state.double_quote_open = !state.double_quote_open;
-                closing
+        // Quotes and brackets: distinguish between quotes (toggleable) and brackets (always opening)
+        let is_quote = matches!(rule.replacement, "\"" | "'" | "`");
+        let is_actually_closing = if is_quote {
+            match rule.replacement {
+                "\"" => {
+                    let closing = state.double_quote_open;
+                    state.double_quote_open = !state.double_quote_open;
+                    closing
+                }
+                "'" => {
+                    let closing = state.single_quote_open;
+                    state.single_quote_open = !state.single_quote_open;
+                    closing
+                }
+                "`" => {
+                    let closing = state.backtick_open;
+                    state.backtick_open = !state.backtick_open;
+                    closing
+                }
+                _ => false,
             }
-            "'" => {
-                let closing = state.single_quote_open;
-                state.single_quote_open = !state.single_quote_open;
-                closing
-            }
-            "`" => {
-                let closing = state.backtick_open;
-                state.backtick_open = !state.backtick_open;
-                closing
-            }
-            _ => false,
+        } else {
+            // Brackets like "(" "[" "{" "<" are always opening, never closing
+            false
         };
 
         if is_actually_closing {
@@ -223,7 +205,7 @@ fn apply_rule_with_state(result: &mut String, rule: &TransformRule, state: &mut 
                 result.pop();
             }
             result.push_str(rule.replacement);
-        } else {
+        } else if is_quote {
             // Opening quote: add space before if needed
             if !result.is_empty() {
                 let last_char = result.chars().last();
@@ -237,6 +219,33 @@ fn apply_rule_with_state(result: &mut String, rule: &TransformRule, state: &mut 
                 }
             }
             result.push_str(rule.replacement);
+        } else {
+            // Opening bracket: different behavior for brackets vs parens
+            // - "[" "{" "<" attach directly (for "arr[i]", "generic<T>")
+            // - "(" has space before (for "value (x + y)")
+            let should_attach = matches!(rule.replacement, "[" | "{" | "<");
+
+            if should_attach {
+                // Remove trailing space for brackets
+                if result.ends_with(' ') {
+                    result.pop();
+                }
+                result.push_str(rule.replacement);
+            } else {
+                // Opening paren: add space before if needed
+                if !result.is_empty() {
+                    let last_char = result.chars().last();
+                    let needs_space = match last_char {
+                        Some(c) if c.is_whitespace() => false,
+                        _ => true,
+                    };
+
+                    if needs_space {
+                        result.push(' ');
+                    }
+                }
+                result.push_str(rule.replacement);
+            }
         }
     } else {
         // For operators and symbols, add space before if result isn't empty
@@ -244,7 +253,7 @@ fn apply_rule_with_state(result: &mut String, rule: &TransformRule, state: &mut 
         if !result.is_empty() {
             let last_char = result.chars().last();
             let needs_space = match last_char {
-                Some('(') | Some('[') | Some('{') | Some('"') | Some('\'') => false,
+                Some('(') | Some('[') | Some('{') | Some('<') | Some('"') | Some('\'') => false,
                 Some(c) if c.is_whitespace() => false,
                 _ => true,
             };

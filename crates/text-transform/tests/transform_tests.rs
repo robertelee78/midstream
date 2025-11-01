@@ -236,10 +236,14 @@ fn test_performance_regression() {
     }
     let elapsed = start.elapsed();
 
-    // 5000 transformations should take well under 25ms (5ms per transformation)
+    // 5000 transformations target: <25ms in release, <50ms in debug
+    // Debug builds are intentionally slower for faster compilation
+    let threshold = if cfg!(debug_assertions) { 50 } else { 25 };
+
     assert!(
-        elapsed.as_millis() < 25,
-        "Performance regression: {}ms for 5000 calls (target: <25ms)",
-        elapsed.as_millis()
+        elapsed.as_millis() < threshold,
+        "Performance regression: {}ms for 5000 calls (target: <{}ms)",
+        elapsed.as_millis(),
+        threshold
     );
 }

@@ -40,7 +40,7 @@ impl TransformRule {
 
 /// Static mapping table - initialized once at startup
 pub static STATIC_MAPPINGS: Lazy<HashMap<&'static str, TransformRule>> = Lazy::new(|| {
-    let mut map = HashMap::new();
+    let mut map = HashMap::with_capacity(65); // Pre-allocate for performance
 
     // ========================================
     // PUNCTUATION (attach_to_prev = true)
