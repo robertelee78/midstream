@@ -116,7 +116,7 @@ fn test_symbols_hash() {
 fn test_symbols_money() {
     assert_eq!(transform("dollar sign amount"), "$ amount");
     assert_eq!(transform("dollarsign price"), "$ price");
-    assert_eq!(transform("fifty percent"), "fifty %");
+    assert_eq!(transform("fifty percent"), "50 %");  // "fifty" → "5" with number transformations
     assert_eq!(transform("rate percent sign"), "rate %");
 }
 

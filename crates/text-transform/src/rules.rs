@@ -40,7 +40,7 @@ impl TransformRule {
 
 /// Static mapping table - initialized once at startup
 pub static STATIC_MAPPINGS: Lazy<HashMap<&'static str, TransformRule>> = Lazy::new(|| {
-    let mut map = HashMap::with_capacity(65); // Pre-allocate for performance
+    let mut map = HashMap::with_capacity(250); // Pre-allocate for performance (increased for numbers)
 
     // ========================================
     // PUNCTUATION (attach_to_prev = true)
@@ -277,6 +277,143 @@ pub static STATIC_MAPPINGS: Lazy<HashMap<&'static str, TransformRule>> = Lazy::n
     // WHITESPACE CONTROL
     // ========================================
     map.insert("no space", TransformRule::new("", false));
+
+    // ========================================
+    // NUMBERS (0-9, 10-19, 20-90, 100-900)
+    // ========================================
+    // Basic digits (0-9)
+    map.insert("zero", TransformRule::new("0", false));
+    map.insert("one", TransformRule::new("1", false));
+    map.insert("two", TransformRule::new("2", false));
+    map.insert("three", TransformRule::new("3", false));
+    map.insert("four", TransformRule::new("4", false));
+    map.insert("five", TransformRule::new("5", false));
+    map.insert("six", TransformRule::new("6", false));
+    map.insert("seven", TransformRule::new("7", false));
+    map.insert("eight", TransformRule::new("8", false));
+    map.insert("nine", TransformRule::new("9", false));
+
+    // Teens (10-19)
+    map.insert("ten", TransformRule::new("10", false));
+    map.insert("eleven", TransformRule::new("11", false));
+    map.insert("twelve", TransformRule::new("12", false));
+    map.insert("thirteen", TransformRule::new("13", false));
+    map.insert("fourteen", TransformRule::new("14", false));
+    map.insert("fifteen", TransformRule::new("15", false));
+    map.insert("sixteen", TransformRule::new("16", false));
+    map.insert("seventeen", TransformRule::new("17", false));
+    map.insert("eighteen", TransformRule::new("18", false));
+    map.insert("nineteen", TransformRule::new("19", false));
+
+    // Tens (20-90)
+    map.insert("twenty", TransformRule::new("20", false));
+    map.insert("thirty", TransformRule::new("30", false));
+    map.insert("forty", TransformRule::new("40", false));
+    map.insert("fifty", TransformRule::new("50", false));
+    map.insert("sixty", TransformRule::new("60", false));
+    map.insert("seventy", TransformRule::new("70", false));
+    map.insert("eighty", TransformRule::new("80", false));
+    map.insert("ninety", TransformRule::new("90", false));
+
+    // Compound numbers (20-99) - two-word patterns
+    // Twenties (21-29)
+    map.insert("twenty one", TransformRule::new("21", false));
+    map.insert("twenty two", TransformRule::new("22", false));
+    map.insert("twenty three", TransformRule::new("23", false));
+    map.insert("twenty four", TransformRule::new("24", false));
+    map.insert("twenty five", TransformRule::new("25", false));
+    map.insert("twenty six", TransformRule::new("26", false));
+    map.insert("twenty seven", TransformRule::new("27", false));
+    map.insert("twenty eight", TransformRule::new("28", false));
+    map.insert("twenty nine", TransformRule::new("29", false));
+
+    // Thirties (31-39)
+    map.insert("thirty one", TransformRule::new("31", false));
+    map.insert("thirty two", TransformRule::new("32", false));
+    map.insert("thirty three", TransformRule::new("33", false));
+    map.insert("thirty four", TransformRule::new("34", false));
+    map.insert("thirty five", TransformRule::new("35", false));
+    map.insert("thirty six", TransformRule::new("36", false));
+    map.insert("thirty seven", TransformRule::new("37", false));
+    map.insert("thirty eight", TransformRule::new("38", false));
+    map.insert("thirty nine", TransformRule::new("39", false));
+
+    // Forties (41-49)
+    map.insert("forty one", TransformRule::new("41", false));
+    map.insert("forty two", TransformRule::new("42", false));
+    map.insert("forty three", TransformRule::new("43", false));
+    map.insert("forty four", TransformRule::new("44", false));
+    map.insert("forty five", TransformRule::new("45", false));
+    map.insert("forty six", TransformRule::new("46", false));
+    map.insert("forty seven", TransformRule::new("47", false));
+    map.insert("forty eight", TransformRule::new("48", false));
+    map.insert("forty nine", TransformRule::new("49", false));
+
+    // Fifties (51-59)
+    map.insert("fifty one", TransformRule::new("51", false));
+    map.insert("fifty two", TransformRule::new("52", false));
+    map.insert("fifty three", TransformRule::new("53", false));
+    map.insert("fifty four", TransformRule::new("54", false));
+    map.insert("fifty five", TransformRule::new("55", false));
+    map.insert("fifty six", TransformRule::new("56", false));
+    map.insert("fifty seven", TransformRule::new("57", false));
+    map.insert("fifty eight", TransformRule::new("58", false));
+    map.insert("fifty nine", TransformRule::new("59", false));
+
+    // Sixties (61-69)
+    map.insert("sixty one", TransformRule::new("61", false));
+    map.insert("sixty two", TransformRule::new("62", false));
+    map.insert("sixty three", TransformRule::new("63", false));
+    map.insert("sixty four", TransformRule::new("64", false));
+    map.insert("sixty five", TransformRule::new("65", false));
+    map.insert("sixty six", TransformRule::new("66", false));
+    map.insert("sixty seven", TransformRule::new("67", false));
+    map.insert("sixty eight", TransformRule::new("68", false));
+    map.insert("sixty nine", TransformRule::new("69", false));
+
+    // Seventies (71-79)
+    map.insert("seventy one", TransformRule::new("71", false));
+    map.insert("seventy two", TransformRule::new("72", false));
+    map.insert("seventy three", TransformRule::new("73", false));
+    map.insert("seventy four", TransformRule::new("74", false));
+    map.insert("seventy five", TransformRule::new("75", false));
+    map.insert("seventy six", TransformRule::new("76", false));
+    map.insert("seventy seven", TransformRule::new("77", false));
+    map.insert("seventy eight", TransformRule::new("78", false));
+    map.insert("seventy nine", TransformRule::new("79", false));
+
+    // Eighties (81-89)
+    map.insert("eighty one", TransformRule::new("81", false));
+    map.insert("eighty two", TransformRule::new("82", false));
+    map.insert("eighty three", TransformRule::new("83", false));
+    map.insert("eighty four", TransformRule::new("84", false));
+    map.insert("eighty five", TransformRule::new("85", false));
+    map.insert("eighty six", TransformRule::new("86", false));
+    map.insert("eighty seven", TransformRule::new("87", false));
+    map.insert("eighty eight", TransformRule::new("88", false));
+    map.insert("eighty nine", TransformRule::new("89", false));
+
+    // Nineties (91-99)
+    map.insert("ninety one", TransformRule::new("91", false));
+    map.insert("ninety two", TransformRule::new("92", false));
+    map.insert("ninety three", TransformRule::new("93", false));
+    map.insert("ninety four", TransformRule::new("94", false));
+    map.insert("ninety five", TransformRule::new("95", false));
+    map.insert("ninety six", TransformRule::new("96", false));
+    map.insert("ninety seven", TransformRule::new("97", false));
+    map.insert("ninety eight", TransformRule::new("98", false));
+    map.insert("ninety nine", TransformRule::new("99", false));
+
+    // Hundreds (100-900)
+    map.insert("one hundred", TransformRule::new("100", false));
+    map.insert("two hundred", TransformRule::new("200", false));
+    map.insert("three hundred", TransformRule::new("300", false));
+    map.insert("four hundred", TransformRule::new("400", false));
+    map.insert("five hundred", TransformRule::new("500", false));
+    map.insert("six hundred", TransformRule::new("600", false));
+    map.insert("seven hundred", TransformRule::new("700", false));
+    map.insert("eight hundred", TransformRule::new("800", false));
+    map.insert("nine hundred", TransformRule::new("900", false));
 
     map
 });

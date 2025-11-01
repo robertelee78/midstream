@@ -239,15 +239,24 @@ fn apply_rule_with_state(result: &mut String, rule: &TransformRule, state: &mut 
             result.push_str(rule.replacement);
         } else {
             // Opening bracket: different behavior for brackets vs parens
-            // - "[" "{" "<" attach directly (for "arr[i]", "generic<T>")
+            // - "[" "{" "<" attach directly ONLY if not after an operator (for "arr[i]", "generic<T>")
+            // - Keep space after operators: "x = [1, 2, 3]" not "x =[1, 2, 3]"
             // - "(" has space before (for "value (x + y)")
             let should_attach = matches!(rule.replacement, "[" | "{" | "<");
 
             if should_attach {
-                // Remove trailing space for brackets
-                if result.ends_with(' ') {
+                // Check if last character is an operator that needs space after it
+                let last_char = result.chars().last();
+                let after_operator = matches!(last_char, Some('=') | Some('<') | Some('>') | Some('+') | Some('-') | Some('*') | Some('/') | Some('&') | Some('|') | Some('!') | Some('%') | Some('^'));
+
+                if after_operator {
+                    // Add space after operator before bracket: "x = [" not "x =["
+                    result.push(' ');
+                } else if result.ends_with(' ') {
+                    // Remove trailing space for brackets in other contexts: "arr[i]" not "arr [i]"
                     result.pop();
                 }
+
                 result.push_str(rule.replacement);
             } else {
                 // Opening paren: add space before if needed
@@ -266,14 +275,16 @@ fn apply_rule_with_state(result: &mut String, rule: &TransformRule, state: &mut 
             }
         }
     } else {
-        // For operators and symbols, add space before if result isn't empty
+        // For operators and symbols (including numbers), add space before if result isn't empty
         // and doesn't end with special characters
         if !result.is_empty() {
             let last_char = result.chars().last();
+            // Don't add space after opening brackets/quotes
+            // But DO add space after operators like < > = + - etc
             let needs_space = match last_char {
-                Some('(') | Some('[') | Some('{') | Some('<') | Some('"') | Some('\'') => false,
+                Some('(') | Some('[') | Some('{') | Some('"') | Some('\'') | Some('`') => false,
                 Some(c) if c.is_whitespace() => false,
-                _ => true,
+                _ => true,  // This includes operators like < > = + - * /
             };
 
             if needs_space {
