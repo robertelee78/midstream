@@ -6,6 +6,7 @@ members = [
     "crates/temporal-attractor-studio",
     "crates/temporal-neural-solver",
     "crates/strange-loop",
+    "crates/text-transform",
 ]
 exclude = ["npm-wasm"]
 
@@ -50,6 +51,9 @@ midstreamer-strange-loop = { path = "crates/strange-loop" }
 
 # QUIC multi-stream support (local workspace crate)
 midstreamer-quic = { path = "crates/quic-multistream" }
+
+# Text transformation support (Tier 1 static transformations)
+midstreamer-text-transform = { path = "crates/text-transform" }
 
 # Additional dependencies for advanced integrations
 nalgebra = "0.33" # For linear algebra in attractor analysis
