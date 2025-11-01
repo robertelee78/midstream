@@ -164,8 +164,59 @@ pub static STATIC_MAPPINGS: Lazy<HashMap<&'static str, TransformRule>> = Lazy::n
     // SPECIAL CHARACTERS
     // ========================================
     map.insert("newline", TransformRule::new("\n", false));
+    map.insert("new line", TransformRule::new("\n", false));
     map.insert("tab", TransformRule::new("\t", false));
     map.insert("space", TransformRule::new(" ", false));
+
+    // ========================================
+    // KEYBOARD ACTIONS (special markers for key presses)
+    // ========================================
+    map.insert("backspace", TransformRule::new("<KEY:BackSpace>", false));
+    map.insert("delete", TransformRule::new("<KEY:Delete>", false));
+    map.insert("enter", TransformRule::new("<KEY:Return>", false));
+    map.insert("return", TransformRule::new("<KEY:Return>", false));
+    map.insert("escape", TransformRule::new("<KEY:Escape>", false));
+    map.insert("tab key", TransformRule::new("<KEY:Tab>", false));
+
+    // ========================================
+    // CTRL KEY COMBINATIONS (Unix/terminal control sequences)
+    // ========================================
+    // Line editing
+    map.insert("control a", TransformRule::new("<KEY:ctrl-a>", false));  // Move to start of line
+    map.insert("control e", TransformRule::new("<KEY:ctrl-e>", false));  // Move to end of line
+    map.insert("control u", TransformRule::new("<KEY:ctrl-u>", false));  // Delete line before cursor
+    map.insert("control k", TransformRule::new("<KEY:ctrl-k>", false));  // Delete line after cursor
+    map.insert("control w", TransformRule::new("<KEY:ctrl-w>", false));  // Delete word before cursor
+
+    // Clipboard
+    map.insert("control c", TransformRule::new("<KEY:ctrl-c>", false));  // Copy / Interrupt
+    map.insert("control x", TransformRule::new("<KEY:ctrl-x>", false));  // Cut
+    map.insert("control v", TransformRule::new("<KEY:ctrl-v>", false));  // Paste
+
+    // File operations
+    map.insert("control s", TransformRule::new("<KEY:ctrl-s>", false));  // Save
+    map.insert("control o", TransformRule::new("<KEY:ctrl-o>", false));  // Open
+    map.insert("control n", TransformRule::new("<KEY:ctrl-n>", false));  // New
+
+    // Undo/Redo
+    map.insert("control z", TransformRule::new("<KEY:ctrl-z>", false));  // Undo
+    map.insert("control y", TransformRule::new("<KEY:ctrl-y>", false));  // Redo
+
+    // Search/Find
+    map.insert("control f", TransformRule::new("<KEY:ctrl-f>", false));  // Find
+    map.insert("control r", TransformRule::new("<KEY:ctrl-r>", false));  // Reverse search (terminal)
+    map.insert("control g", TransformRule::new("<KEY:ctrl-g>", false));  // Cancel (vim/emacs)
+
+    // Navigation
+    map.insert("control p", TransformRule::new("<KEY:ctrl-p>", false));  // Previous line
+    map.insert("control n", TransformRule::new("<KEY:ctrl-n>", false));  // Next line (duplicate with "new")
+    map.insert("control b", TransformRule::new("<KEY:ctrl-b>", false));  // Back one character
+    map.insert("control f", TransformRule::new("<KEY:ctrl-f>", false));  // Forward one character (duplicate with "find")
+
+    // Terminal control
+    map.insert("control d", TransformRule::new("<KEY:ctrl-d>", false));  // EOF / Exit
+    map.insert("control l", TransformRule::new("<KEY:ctrl-l>", false));  // Clear screen
+    map.insert("control t", TransformRule::new("<KEY:ctrl-t>", false));  // Transpose characters
 
     // ========================================
     // WHITESPACE CONTROL
