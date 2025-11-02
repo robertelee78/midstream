@@ -114,7 +114,7 @@ fn benchmark(text: &str, iterations: usize) -> PyResult<(f64, String)> {
 ///     >>> print(msg)
 ///     60+ transformation rules loaded
 #[pymodule]
-fn midstreamer_transform(_py: Python, m: &PyModule) -> PyResult<()> {
+fn midstreamer_transform(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(transform, m)?)?;
     m.add_function(wrap_pyfunction!(get_stats, m)?)?;
     m.add_function(wrap_pyfunction!(benchmark, m)?)?;
