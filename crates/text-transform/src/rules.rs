@@ -42,33 +42,116 @@ impl TransformRule {
     }
 }
 
-/// Static mapping table - EMPTY until we document Parakeet-TDT behavior
-/// Will be rebuilt for secretary dictation mode (task 3393b914)
+/// Static mapping table - Secretary Dictation Mode (1950s style)
+/// Task 3393b914: Tier 1 static transformations
 pub static STATIC_MAPPINGS: Lazy<HashMap<&'static str, TransformRule>> = Lazy::new(|| {
-    let map = HashMap::with_capacity(50); // Start small for dictation mode
+    let mut map = HashMap::with_capacity(80);
 
     // ========================================
-    // SECRETARY DICTATION MODE - EMPTY (0 RULES)
+    // A. BASIC PUNCTUATION (attach_to_prev: true)
     // ========================================
-    // Rules will be added after documenting Parakeet-TDT behavior (task 4218691c)
-    // Target: 30-50 basic dictation rules (punctuation, formatting)
-    //
-    // DO NOT add programming operators, math symbols, or CLI patterns
-    // Those belong in separate modes (code/math/command-line)
-    //
-    // Workflow:
-    // 1. Test Parakeet-TDT with voice commands → document actual output
-    // 2. Design minimal rule set matching STT behavior
-    // 3. Implement rules here
-    // 4. Test with real voice samples
-    //
-    // Example rules to add later (after testing):
-    // map.insert("comma", TransformRule::new(",", true));
-    // map.insert("period", TransformRule::new(".", true));
-    // map.insert("question mark", TransformRule::new("?", true));
-    // map.insert("exclamation point", TransformRule::new("!", true));
-    // map.insert("new line", TransformRule::new("\n", true));
-    // map.insert("new paragraph", TransformRule::new("\n\n", true));
+    map.insert("comma", TransformRule::new(",", true));
+    map.insert("period", TransformRule::new(".", true));
+    map.insert("full stop", TransformRule::new(".", true));
+    map.insert("question mark", TransformRule::new("?", true));
+    map.insert("exclamation point", TransformRule::new("!", true));
+    map.insert("exclamation mark", TransformRule::new("!", true));
+    map.insert("colon", TransformRule::new(":", true));
+    map.insert("semicolon", TransformRule::new(";", true));
+    map.insert("dash", TransformRule::new("-", true));
+    map.insert("hyphen", TransformRule::new("-", true));
+    map.insert("ellipsis", TransformRule::new("...", true));
+    map.insert("three dots", TransformRule::new("...", true));
+
+    // ========================================
+    // B. PARENTHESES & BRACKETS
+    // ========================================
+    // Parentheses (singular and plural forms)
+    map.insert("open paren", TransformRule::opening("("));
+    map.insert("open parenthesis", TransformRule::opening("("));
+    map.insert("open parentheses", TransformRule::opening("("));
+    map.insert("close paren", TransformRule::new(")", true));
+    map.insert("close parenthesis", TransformRule::new(")", true));
+    map.insert("close parentheses", TransformRule::new(")", true));
+
+    // Square brackets
+    map.insert("open bracket", TransformRule::opening("["));
+    map.insert("close bracket", TransformRule::new("]", true));
+
+    // Curly braces
+    map.insert("open brace", TransformRule::opening("{"));
+    map.insert("close brace", TransformRule::new("}", true));
+
+    // ========================================
+    // C. QUOTES (stateful toggle with is_opening)
+    // ========================================
+    // Double quotes (toggles open/close via QuoteState)
+    map.insert("quote", TransformRule::opening("\""));
+    map.insert("open quote", TransformRule::opening("\""));
+    map.insert("close quote", TransformRule::opening("\"")); // Uses same rule, state toggles
+
+    // Single quotes (toggles open/close via QuoteState)
+    map.insert("single quote", TransformRule::opening("'"));
+
+    // Apostrophe for contractions (attach_to_prev)
+    map.insert("apostrophe", TransformRule::new("'", true));
+
+    // ========================================
+    // D. SPECIAL SYMBOLS
+    // ========================================
+    map.insert("dollar sign", TransformRule::new("$", false));
+    map.insert("percent sign", TransformRule::new("%", false));
+    map.insert("percent", TransformRule::new("%", false));
+    map.insert("at sign", TransformRule::new("@", false));
+    map.insert("ampersand", TransformRule::new("&", false));
+    map.insert("asterisk", TransformRule::new("*", false));
+    map.insert("hash", TransformRule::new("#", false));
+    map.insert("hashtag", TransformRule::new("#", false));
+    map.insert("pound", TransformRule::new("#", false));
+    map.insert("forward slash", TransformRule::new("/", false));
+    map.insert("slash", TransformRule::new("/", false));
+    map.insert("backslash", TransformRule::new("\\", false));
+
+    // Math symbols (secretaries use these for lists/math)
+    map.insert("plus", TransformRule::new("+", false));
+    map.insert("equals", TransformRule::new("=", false));
+    map.insert("equal sign", TransformRule::new("=", false));
+    map.insert("times", TransformRule::new("×", false));
+    map.insert("multiply", TransformRule::new("×", false));
+
+    // ========================================
+    // E. FORMATTING COMMANDS
+    // ========================================
+    map.insert("new line", TransformRule::new("\n", true));
+    map.insert("new paragraph", TransformRule::new("\n\n", true));
+    map.insert("tab", TransformRule::new("\t", true));
+
+    // ========================================
+    // F. ABBREVIATION MARKERS (processed specially)
+    // ========================================
+    // These are markers that will be post-processed with capitalization
+    // The abbreviation logic will be in lib.rs transform()
+
+    // Full forms
+    map.insert("mister", TransformRule::new("Mr.", false));
+    map.insert("missus", TransformRule::new("Mrs.", false));
+    map.insert("doctor", TransformRule::new("Dr.", false));
+    map.insert("et cetera", TransformRule::new("etc.", false));
+    map.insert("versus", TransformRule::new("vs.", false));
+    map.insert("post script", TransformRule::new("P.S.", false));
+
+    // Shortened forms (STT may transcribe these instead)
+    map.insert("mr", TransformRule::new("Mr.", false));
+    map.insert("mrs", TransformRule::new("Mrs.", false));
+    map.insert("dr", TransformRule::new("Dr.", false));
+    map.insert("ms", TransformRule::new("Ms.", false));
+
+    // ========================================
+    // G. SPECIAL COMMANDS (processed in lib.rs)
+    // ========================================
+    // "number [words]" - handled by number conversion logic in lib.rs
+    // "caps on/off" - handled by caps mode state in lib.rs
+    // "all caps [word]" - handled by caps mode state in lib.rs
 
     map
 });
@@ -78,9 +161,22 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_mappings_empty() {
-        // Verify map is currently empty (waiting for Parakeet-TDT analysis)
-        assert_eq!(STATIC_MAPPINGS.len(), 0, "Rules should be empty until task 4218691c completes");
+    fn test_mappings_secretary_mode() {
+        // Verify secretary dictation mode rules are loaded (task 3393b914)
+        assert!(STATIC_MAPPINGS.len() > 50, "Secretary mode should have 50+ rules");
+
+        // Test basic punctuation
+        assert!(STATIC_MAPPINGS.contains_key("comma"));
+        assert!(STATIC_MAPPINGS.contains_key("period"));
+        assert!(STATIC_MAPPINGS.contains_key("question mark"));
+
+        // Test brackets
+        assert!(STATIC_MAPPINGS.contains_key("open parenthesis"));
+        assert!(STATIC_MAPPINGS.contains_key("close parenthesis"));
+
+        // Test abbreviations
+        assert!(STATIC_MAPPINGS.contains_key("mister"));
+        assert!(STATIC_MAPPINGS.contains_key("doctor"));
     }
 
     #[test]
