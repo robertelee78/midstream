@@ -121,6 +121,174 @@ pub fn transform(text: &str) -> String {
         }
 
         if !matched {
+            // Check for "number" keyword trigger: "number forty two" → "42"
+            if words_lower[i] == "number" && i + 1 < words.len() {
+                // Look ahead to see if we have a number pattern
+                let mut num_words_consumed = 0;
+                let mut number_result = String::new();
+
+                // Check for 3-word year patterns first (highest priority)
+                if i + 3 < words.len() {
+                    if let (Some(first_rule), Some(second_rule), Some(third_rule)) = (
+                        STATIC_MAPPINGS.get(words_lower[i+1].as_str()),
+                        STATIC_MAPPINGS.get(words_lower[i+2].as_str()),
+                        STATIC_MAPPINGS.get(words_lower[i+3].as_str())
+                    ) {
+                        let first_val: i32 = first_rule.replacement.parse().unwrap_or(0);
+                        let second_val: i32 = second_rule.replacement.parse().unwrap_or(0);
+                        let third_val: i32 = third_rule.replacement.parse().unwrap_or(0);
+
+                        let is_first_teen = matches!(first_rule.replacement, "13" | "14" | "15" | "16" | "17" | "18" | "19");
+                        let is_first_decade = matches!(first_rule.replacement, "10" | "20" | "30" | "40" | "50" | "60" | "70" | "80" | "90");
+                        let is_second_decade = matches!(second_rule.replacement, "10" | "20" | "30" | "40" | "50" | "60" | "70" | "80" | "90");
+                        let is_second_tens = matches!(second_rule.replacement, "20" | "30" | "40" | "50" | "60" | "70" | "80" | "90");
+                        let is_third_ones = matches!(third_rule.replacement, "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9");
+
+                        // Pattern 1a: Teen + Tens + Ones → "nineteen ninety nine" → "1999"
+                        if is_first_teen && is_second_tens && is_third_ones {
+                            number_result = format!("{}", first_val * 100 + second_val + third_val);
+                            num_words_consumed = 4; // "number" + three words
+                        }
+                        // Pattern 1b: Decade + Decade + Ones → "twenty twenty five" → "2025"
+                        else if is_first_decade && is_second_decade && is_third_ones {
+                            number_result = format!("{}", first_val * 100 + second_val + third_val);
+                            num_words_consumed = 4; // "number" + three words
+                        }
+                    }
+                }
+
+                // Check for 2-word year/compound patterns
+                if num_words_consumed == 0 && i + 2 < words.len() {
+                    if let (Some(first_rule), Some(second_rule)) = (
+                        STATIC_MAPPINGS.get(words_lower[i+1].as_str()),
+                        STATIC_MAPPINGS.get(words_lower[i+2].as_str())
+                    ) {
+                        let first_val: i32 = first_rule.replacement.parse().unwrap_or(0);
+                        let second_val: i32 = second_rule.replacement.parse().unwrap_or(0);
+
+                        let is_first_teen = matches!(first_rule.replacement, "13" | "14" | "15" | "16" | "17" | "18" | "19");
+                        let is_first_decade = matches!(first_rule.replacement, "10" | "20" | "30" | "40" | "50" | "60" | "70" | "80" | "90");
+                        let is_first_tens = matches!(first_rule.replacement, "20" | "30" | "40" | "50" | "60" | "70" | "80" | "90");
+                        let is_second_decade = matches!(second_rule.replacement, "10" | "20" | "30" | "40" | "50" | "60" | "70" | "80" | "90");
+                        let is_second_ones = matches!(second_rule.replacement, "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9");
+
+                        // Pattern 2a: Teen + Decade → Year "nineteen fifty" → "1950"
+                        if is_first_teen && is_second_decade {
+                            number_result = format!("{}", first_val * 100 + second_val);
+                            num_words_consumed = 3; // "number" + teen + decade
+                        }
+                        // Pattern 2b: Decade + Decade → Modern Year "twenty twenty" → "2020"
+                        else if is_first_decade && is_second_decade {
+                            number_result = format!("{}", first_val * 100 + second_val);
+                            num_words_consumed = 3; // "number" + decade + decade
+                        }
+                        // Pattern 2c: Tens + Ones → Compound "forty two" → "42"
+                        else if is_first_tens && is_second_ones {
+                            number_result = (first_val + second_val).to_string();
+                            num_words_consumed = 3; // "number" + tens + ones
+                        }
+                    }
+
+                    // Check for decade plural: "nineteen fifties" → "1950s"
+                    if num_words_consumed == 0 && words_lower[i+2].ends_with('s') {
+                        // Try removing plural: "fifties" → "fifty", "sixties" → "sixty", "tens" → "ten"
+                        let base_word = if words_lower[i+2].ends_with("ies") && words_lower[i+2].len() > 3 {
+                            // "fifties" → "fifty", "twenties" → "twenty"
+                            format!("{}y", &words_lower[i+2][..words_lower[i+2].len()-3])
+                        } else if words_lower[i+2].ends_with('s') {
+                            // "tens" → "ten", "sixties" already handled above
+                            words_lower[i+2][..words_lower[i+2].len()-1].to_string()
+                        } else {
+                            words_lower[i+2].clone()
+                        };
+
+                        if let (Some(teen_rule), Some(decade_rule)) = (
+                            STATIC_MAPPINGS.get(words_lower[i+1].as_str()),
+                            STATIC_MAPPINGS.get(base_word.as_str())
+                        ) {
+                            let is_teen = matches!(teen_rule.replacement, "13" | "14" | "15" | "16" | "17" | "18" | "19");
+                            let is_decade = matches!(decade_rule.replacement, "10" | "20" | "30" | "40" | "50" | "60" | "70" | "80" | "90");
+
+                            if is_teen && is_decade {
+                                let teen_val: i32 = teen_rule.replacement.parse().unwrap();
+                                let decade_val: i32 = decade_rule.replacement.parse().unwrap();
+                                number_result = format!("{}s", teen_val * 100 + decade_val);
+                                num_words_consumed = 3; // "number" + teen + decades
+                            }
+                        }
+                    }
+                }
+
+                // If not a multi-word pattern, check for single number word: "number forty" → "40"
+                if num_words_consumed == 0 {
+                    if let Some(num_rule) = STATIC_MAPPINGS.get(words_lower[i+1].as_str()) {
+                        // Check if it's actually a number (0-100)
+                        if num_rule.replacement.chars().all(|c| c.is_ascii_digit()) {
+                            number_result = num_rule.replacement.to_string();
+                            num_words_consumed = 2; // "number" + number_word
+                        }
+                    }
+                }
+
+                // If we matched a number pattern, output it
+                if num_words_consumed > 0 {
+                    if !result.is_empty() {
+                        let last_char = result.chars().last();
+                        let needs_space = match last_char {
+                            Some('(') | Some('[') | Some('{') | Some('"') | Some('\'') | Some('`') => false,
+                            Some(c) if c.is_whitespace() => false,
+                            _ => true,
+                        };
+                        if needs_space {
+                            result.push(' ');
+                        }
+                    }
+                    result.push_str(&number_result);
+                    last_rule_no_space_after = false;
+                    last_rule_is_opening = false;
+                    i += num_words_consumed;
+                    continue;
+                }
+            }
+
+            // Check for compound numbers WITHOUT "number" keyword: "forty two" → "42"
+            if i + 1 < words.len() {
+                if let (Some(tens_rule), Some(ones_rule)) = (
+                    STATIC_MAPPINGS.get(words_lower[i].as_str()),
+                    STATIC_MAPPINGS.get(words_lower[i+1].as_str())
+                ) {
+                    // Check if first is a tens number (20, 30, ..., 90) and second is ones (1-9)
+                    let is_tens = matches!(tens_rule.replacement, "20" | "30" | "40" | "50" | "60" | "70" | "80" | "90");
+                    let is_ones = matches!(ones_rule.replacement, "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9");
+
+                    if is_tens && is_ones {
+                        // Combine: tens + ones (e.g., "40" + "2" = "42")
+                        let tens_val: i32 = tens_rule.replacement.parse().unwrap();
+                        let ones_val: i32 = ones_rule.replacement.parse().unwrap();
+                        let combined = tens_val + ones_val;
+
+                        // Add space before the combined number if needed
+                        if !result.is_empty() {
+                            let last_char = result.chars().last();
+                            let needs_space = match last_char {
+                                Some('(') | Some('[') | Some('{') | Some('"') | Some('\'') | Some('`') => false,
+                                Some(c) if c.is_whitespace() => false,
+                                _ => true,
+                            };
+                            if needs_space {
+                                result.push(' ');
+                            }
+                        }
+
+                        result.push_str(&combined.to_string());
+                        last_rule_no_space_after = false;
+                        last_rule_is_opening = false;
+                        i += 2; // Skip both words
+                        continue;
+                    }
+                }
+            }
+
             // Single word pattern or pass-through
             if let Some(rule) = STATIC_MAPPINGS.get(words_lower[i].as_str()) {
                 apply_rule_with_state(&mut result, rule, &mut quote_state);
