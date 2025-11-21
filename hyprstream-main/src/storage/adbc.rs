@@ -43,10 +43,10 @@
 //! query execution using Arrow's native formats.
 
 use adbc_core::{
-    driver_manager::{ManagedConnection, ManagedDriver},
     options::{AdbcVersion, OptionDatabase, OptionValue},
     Connection, Database, Driver, Statement, Optionable,
 };
+use adbc_driver_manager::{ManagedConnection, ManagedDriver};
 use arrow_array::{
     Array, Int8Array, Int16Array, Int32Array, Int64Array,
     Float32Array, Float64Array, BooleanArray, StringArray,

@@ -18,9 +18,9 @@ doc = true
 
 [dependencies]
 arrow = "54.0.0"
-arrow-flight = { version = "54.0.0", features = ["cli", "flight-sql-experimental", "tls", "tokio"] }
+arrow-flight = { version = "54.0.0", features = ["cli", "flight-sql-experimental", "tls"] }
 bytes = "1.9.0"
-duckdb = { version = "1.1.1", features = ["bundled"] }
+duckdb = { version = "1.4.2", features = ["bundled"] }
 futures = { version = "0.3.31", features = ["alloc"] }
 polars = "0.45.1"
 tokio = { version = "1.42.0", features = ["macros", "rt", "rt-multi-thread"] }
@@ -28,13 +28,14 @@ tokio-rustls = "0.26.1"
 tonic = { version = "0.12.3", features = ["transport", "codegen", "prost"] }
 async-trait = "0.1"
 sqlparser = "0.39.0"
-adbc_core = { version = "0.15.0", features = ["driver_manager"] }
+# adbc_core = "0.20.0"  # Removed: Arrow version conflicts with duckdb, not used in codebase
+# adbc_driver_manager = "0.20.0"  # Removed: Arrow version conflicts with duckdb, not used in codebase
 serde = { version = "1.0", features = ["derive"] }
 serde_derive = "1.0"
 lazy_static = "1.4"
 serde_json = "1.0"
 
-# ADBC dependencies
+# Arrow dependencies (matching duckdb v1.4.2)
 arrow-array = "54.0.0"
 arrow-schema = "54.0.0"
 arrow-ipc = "54.0.0"

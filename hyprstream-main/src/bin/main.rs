@@ -172,7 +172,7 @@ use clap::Parser;
 use hyprstream_core::{
     config::{CliArgs, Settings},
     service::FlightSqlService,
-    storage::{StorageBackend, adbc::AdbcBackend, duckdb::DuckDbBackend},
+    storage::{StorageBackend, /* adbc::AdbcBackend, */ duckdb::DuckDbBackend},
 };
 use std::sync::Arc;
 use tonic::transport::Server;
@@ -186,13 +186,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     
     // Create the storage backend based on configuration
     let engine_backend: Box<dyn StorageBackend> = match settings.engine.engine.as_str() {
-        "adbc" => {
-            Box::new(AdbcBackend::new_with_options(
-                &settings.engine.connection,
-                &settings.engine.options,
-                settings.engine.credentials.as_ref(),
-            )?)
-        }
+        // "adbc" => {  // DISABLED: Arrow version conflicts
+        //     Box::new(AdbcBackend::new_with_options(
+        //         &settings.engine.connection,
+        //         &settings.engine.options,
+        //         settings.engine.credentials.as_ref(),
+        //     )?)
+        // }
         "duckdb" => {
             Box::new(DuckDbBackend::new_with_options(
                 &settings.engine.connection,
@@ -200,7 +200,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 settings.engine.credentials.as_ref(),
             )?)
         }
-        _ => return Err("Unsupported engine type".into()),
+        _ => return Err("Unsupported engine type (adbc disabled due to Arrow version conflicts)".into()),
     };
 
     // Initialize the storage backend
@@ -210,13 +210,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cache_backend = if settings.cache.enabled {
         let cache_config = &settings.cache;
         let backend: Box<dyn StorageBackend> = match cache_config.engine.as_str() {
-            "adbc" => {
-                Box::new(AdbcBackend::new_with_options(
-                    &cache_config.connection,
-                    &cache_config.options,
-                    cache_config.credentials.as_ref(),
-                )?)
-            }
+            // "adbc" => {  // DISABLED: Arrow version conflicts
+            //     Box::new(AdbcBackend::new_with_options(
+            //         &cache_config.connection,
+            //         &cache_config.options,
+            //         cache_config.credentials.as_ref(),
+            //     )?)
+            // }
             "duckdb" => {
                 Box::new(DuckDbBackend::new_with_options(
                     &cache_config.connection,
@@ -224,7 +224,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     cache_config.credentials.as_ref(),
                 )?)
             }
-            _ => return Err("Unsupported cache engine type".into()),
+            _ => return Err("Unsupported cache engine type (adbc disabled due to Arrow version conflicts)".into()),
         };
         Some(backend)
     } else {

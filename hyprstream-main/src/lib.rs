@@ -35,9 +35,9 @@ ADBC-compliant datastores.
 
 Basic usage example with programmatic configuration:
 
-```rust,no_run
-use hyprstream::config::{Settings, EngineConfig, CacheConfig};
-use hyprstream::service::FlightServiceImpl;
+```rust,ignore
+use hyprstream_core::config::{Settings, EngineConfig, CacheConfig};
+use hyprstream_core::service::FlightSqlService;
 use std::sync::Arc;
 use std::collections::HashMap;
 

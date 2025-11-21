@@ -2,13 +2,16 @@
 //!
 //! This module provides multiple storage backend implementations:
 //! - `duckdb`: High-performance embedded database for caching and local storage
-//! - `adbc`: Arrow Database Connectivity for external database integration
+//! - `adbc`: Arrow Database Connectivity for external database integration (DISABLED: Arrow version conflicts)
 //! - `cached`: Two-tier storage with configurable caching layer
 //!
 //! Each backend implements the `StorageBackend` trait, providing a consistent
 //! interface for metric storage and retrieval operations.
 
-pub mod adbc;
+// ADBC module disabled due to Arrow version conflicts with duckdb
+// adbc_core v0.20 uses arrow v54.3, adbc_core v0.21 uses arrow v57
+// duckdb v1.4.2 uses arrow v56.2 - no compatible overlap exists
+// pub mod adbc;
 pub mod duckdb;
 pub mod cache;
 pub mod table_manager;
