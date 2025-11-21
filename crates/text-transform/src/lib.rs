@@ -18,7 +18,97 @@ mod spacing;
 mod python_bindings;
 
 pub use rules::TransformRule;
-use rules::STATIC_MAPPINGS;
+use rules::{STATIC_MAPPINGS, NUMBER_WORDS, CONTEXTUAL_NUMBER_TRIGGERS};
+
+/// Parse number words starting at `start_idx` and return (number_string, words_consumed)
+///
+/// Intelligently handles various number patterns:
+/// - Single: "five" → "5"
+/// - Compound: "forty two" → "42"
+/// - Years: "nineteen fifty" → "1950", "twenty twenty five" → "2025"
+/// - Codes: "four oh four" → "404", "eighty eighty" → "8080"
+/// - Decades: "nineteen fifties" → "1950s"
+fn parse_number_words(words_lower: &[String], start_idx: usize) -> (String, usize) {
+    if start_idx >= words_lower.len() {
+        return (String::new(), 0);
+    }
+
+    // Helper: Check number type
+    let is_teen = |n: i32| n >= 13 && n <= 19;
+    let is_decade = |n: i32| n >= 10 && n <= 90 && n % 10 == 0;
+    let is_tens = |n: i32| n >= 20 && n <= 90 && n % 10 == 0;  // 20, 30, ..., 90
+    let is_ones = |n: i32| n >= 1 && n <= 9;
+
+    // Try 3-word patterns first
+    if start_idx + 2 < words_lower.len() {
+        if let (Some(&first), Some(&second), Some(&third)) = (
+            NUMBER_WORDS.get(words_lower[start_idx].as_str()),
+            NUMBER_WORDS.get(words_lower[start_idx + 1].as_str()),
+            NUMBER_WORDS.get(words_lower[start_idx + 2].as_str()),
+        ) {
+            // Pattern: X oh X → "404" (e.g., "four oh four")
+            if second == 0 && words_lower[start_idx + 1] == "oh" {
+                return (format!("{}{}{}", first, second, third), 3);
+            }
+            // Year: teen + tens + ones → "1999" (e.g., "nineteen ninety nine")
+            if is_teen(first) && is_tens(second) && is_ones(third) {
+                return (format!("{}", first * 100 + second + third), 3);
+            }
+            // Year: decade + decade + ones → "2025" (e.g., "twenty twenty five")
+            if is_decade(first) && is_decade(second) && is_ones(third) {
+                return (format!("{}", first * 100 + second + third), 3);
+            }
+        }
+    }
+
+    // Try 2-word patterns
+    if start_idx + 1 < words_lower.len() {
+        // Check for decade plural: "nineteen fifties" → "1950s"
+        let second_word = &words_lower[start_idx + 1];
+        if second_word.ends_with('s') {
+            // Try to derive base word: "fifties" → "fifty", "eighties" → "eighty"
+            let base = if second_word.ends_with("ies") && second_word.len() > 3 {
+                format!("{}y", &second_word[..second_word.len()-3])
+            } else {
+                second_word[..second_word.len()-1].to_string()
+            };
+
+            if let (Some(&first), Some(&second)) = (
+                NUMBER_WORDS.get(words_lower[start_idx].as_str()),
+                NUMBER_WORDS.get(base.as_str()),
+            ) {
+                if is_teen(first) && is_decade(second) {
+                    return (format!("{}s", first * 100 + second), 2);
+                }
+            }
+        }
+
+        if let (Some(&first), Some(&second)) = (
+            NUMBER_WORDS.get(words_lower[start_idx].as_str()),
+            NUMBER_WORDS.get(words_lower[start_idx + 1].as_str()),
+        ) {
+            // Year: teen + decade → "1950" (e.g., "nineteen fifty")
+            if is_teen(first) && is_decade(second) {
+                return (format!("{}", first * 100 + second), 2);
+            }
+            // Year: decade + decade → "2020" (e.g., "twenty twenty")
+            if is_decade(first) && is_decade(second) {
+                return (format!("{}", first * 100 + second), 2);
+            }
+            // Compound: tens + ones → "42" (e.g., "forty two")
+            if is_tens(first) && is_ones(second) {
+                return ((first + second).to_string(), 2);
+            }
+        }
+    }
+
+    // Single number word
+    if let Some(&val) = NUMBER_WORDS.get(words_lower[start_idx].as_str()) {
+        return (val.to_string(), 1);
+    }
+
+    (String::new(), 0)
+}
 
 /// Transform text by replacing verbal punctuation with actual symbols.
 ///
@@ -38,9 +128,9 @@ use rules::STATIC_MAPPINGS;
 /// assert_eq!(transform("Hello comma world"), "Hello, world");
 /// assert_eq!(transform("Stop period"), "Stop.");
 ///
-/// // Operators with spacing
-/// assert_eq!(transform("x equals y"), "x = y");
-/// assert_eq!(transform("a plus b"), "a + b");
+/// // Operators with explicit triggers (v2)
+/// assert_eq!(transform("x equals sign y"), "x = y");
+/// assert_eq!(transform("a plus sign b"), "a + b");
 ///
 /// // Brackets
 /// assert_eq!(transform("open paren x close paren"), "(x)");
@@ -63,6 +153,64 @@ pub fn transform(text: &str) -> String {
     let mut key_buf = String::with_capacity(50);
 
     while i < words.len() {
+        // ========================================
+        // LAYER 1: Escape/Literal Detection (v2)
+        // Process FIRST to override all other layers
+        // ========================================
+        // Patterns: "literal X", "the word X", "literally X", "say X"
+        let escape_trigger = match words_lower[i].as_str() {
+            "literal" | "literally" | "say" => Some(1), // single-word trigger
+            "the" if i + 1 < words.len() && words_lower[i + 1] == "word" => Some(2), // "the word" trigger
+            _ => None,
+        };
+
+        if let Some(trigger_len) = escape_trigger {
+            let escaped_start = i + trigger_len;
+            if escaped_start < words.len() {
+                // Check if the next word(s) form a multi-word pattern we should escape
+                // e.g., "literal open paren" → "open paren"
+                let mut escaped_words = 1;
+
+                // Try to match multi-word patterns (2, 3, 4 words) to escape them fully
+                if escaped_start + 1 < words.len() {
+                    key_buf.clear();
+                    key_buf.push_str(&words_lower[escaped_start]);
+                    key_buf.push(' ');
+                    key_buf.push_str(&words_lower[escaped_start + 1]);
+                    if STATIC_MAPPINGS.contains_key(key_buf.as_str()) {
+                        escaped_words = 2;
+                    }
+                }
+                if escaped_start + 2 < words.len() {
+                    key_buf.clear();
+                    key_buf.push_str(&words_lower[escaped_start]);
+                    key_buf.push(' ');
+                    key_buf.push_str(&words_lower[escaped_start + 1]);
+                    key_buf.push(' ');
+                    key_buf.push_str(&words_lower[escaped_start + 2]);
+                    if STATIC_MAPPINGS.contains_key(key_buf.as_str()) {
+                        escaped_words = 3;
+                    }
+                }
+
+                // Output the escaped word(s) literally (preserve original casing)
+                for j in 0..escaped_words {
+                    if !result.is_empty() && !result.ends_with(' ') {
+                        result.push(' ');
+                    }
+                    result.push_str(words[escaped_start + j]);
+                }
+
+                last_rule_no_space_after = false;
+                last_rule_is_opening = false;
+                i = escaped_start + escaped_words;
+                continue;
+            }
+        }
+
+        // ========================================
+        // LAYER 2 & 3: Pattern Matching
+        // ========================================
         // Check for multi-word patterns first (longest to shortest: 4, 3, 2 words)
         let mut matched = false;
 
@@ -121,117 +269,12 @@ pub fn transform(text: &str) -> String {
         }
 
         if !matched {
-            // Check for "number" keyword trigger: "number forty two" → "42"
-            if words_lower[i] == "number" && i + 1 < words.len() {
-                // Look ahead to see if we have a number pattern
-                let mut num_words_consumed = 0;
-                let mut number_result = String::new();
-
-                // Check for 3-word year patterns first (highest priority)
-                if i + 3 < words.len() {
-                    if let (Some(first_rule), Some(second_rule), Some(third_rule)) = (
-                        STATIC_MAPPINGS.get(words_lower[i+1].as_str()),
-                        STATIC_MAPPINGS.get(words_lower[i+2].as_str()),
-                        STATIC_MAPPINGS.get(words_lower[i+3].as_str())
-                    ) {
-                        let first_val: i32 = first_rule.replacement.parse().unwrap_or(0);
-                        let second_val: i32 = second_rule.replacement.parse().unwrap_or(0);
-                        let third_val: i32 = third_rule.replacement.parse().unwrap_or(0);
-
-                        let is_first_teen = matches!(first_rule.replacement, "13" | "14" | "15" | "16" | "17" | "18" | "19");
-                        let is_first_decade = matches!(first_rule.replacement, "10" | "20" | "30" | "40" | "50" | "60" | "70" | "80" | "90");
-                        let is_second_decade = matches!(second_rule.replacement, "10" | "20" | "30" | "40" | "50" | "60" | "70" | "80" | "90");
-                        let is_second_tens = matches!(second_rule.replacement, "20" | "30" | "40" | "50" | "60" | "70" | "80" | "90");
-                        let is_third_ones = matches!(third_rule.replacement, "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9");
-
-                        // Pattern 1a: Teen + Tens + Ones → "nineteen ninety nine" → "1999"
-                        if is_first_teen && is_second_tens && is_third_ones {
-                            number_result = format!("{}", first_val * 100 + second_val + third_val);
-                            num_words_consumed = 4; // "number" + three words
-                        }
-                        // Pattern 1b: Decade + Decade + Ones → "twenty twenty five" → "2025"
-                        else if is_first_decade && is_second_decade && is_third_ones {
-                            number_result = format!("{}", first_val * 100 + second_val + third_val);
-                            num_words_consumed = 4; // "number" + three words
-                        }
-                    }
-                }
-
-                // Check for 2-word year/compound patterns
-                if num_words_consumed == 0 && i + 2 < words.len() {
-                    if let (Some(first_rule), Some(second_rule)) = (
-                        STATIC_MAPPINGS.get(words_lower[i+1].as_str()),
-                        STATIC_MAPPINGS.get(words_lower[i+2].as_str())
-                    ) {
-                        let first_val: i32 = first_rule.replacement.parse().unwrap_or(0);
-                        let second_val: i32 = second_rule.replacement.parse().unwrap_or(0);
-
-                        let is_first_teen = matches!(first_rule.replacement, "13" | "14" | "15" | "16" | "17" | "18" | "19");
-                        let is_first_decade = matches!(first_rule.replacement, "10" | "20" | "30" | "40" | "50" | "60" | "70" | "80" | "90");
-                        let is_first_tens = matches!(first_rule.replacement, "20" | "30" | "40" | "50" | "60" | "70" | "80" | "90");
-                        let is_second_decade = matches!(second_rule.replacement, "10" | "20" | "30" | "40" | "50" | "60" | "70" | "80" | "90");
-                        let is_second_ones = matches!(second_rule.replacement, "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9");
-
-                        // Pattern 2a: Teen + Decade → Year "nineteen fifty" → "1950"
-                        if is_first_teen && is_second_decade {
-                            number_result = format!("{}", first_val * 100 + second_val);
-                            num_words_consumed = 3; // "number" + teen + decade
-                        }
-                        // Pattern 2b: Decade + Decade → Modern Year "twenty twenty" → "2020"
-                        else if is_first_decade && is_second_decade {
-                            number_result = format!("{}", first_val * 100 + second_val);
-                            num_words_consumed = 3; // "number" + decade + decade
-                        }
-                        // Pattern 2c: Tens + Ones → Compound "forty two" → "42"
-                        else if is_first_tens && is_second_ones {
-                            number_result = (first_val + second_val).to_string();
-                            num_words_consumed = 3; // "number" + tens + ones
-                        }
-                    }
-
-                    // Check for decade plural: "nineteen fifties" → "1950s"
-                    if num_words_consumed == 0 && words_lower[i+2].ends_with('s') {
-                        // Try removing plural: "fifties" → "fifty", "sixties" → "sixty", "tens" → "ten"
-                        let base_word = if words_lower[i+2].ends_with("ies") && words_lower[i+2].len() > 3 {
-                            // "fifties" → "fifty", "twenties" → "twenty"
-                            format!("{}y", &words_lower[i+2][..words_lower[i+2].len()-3])
-                        } else if words_lower[i+2].ends_with('s') {
-                            // "tens" → "ten", "sixties" already handled above
-                            words_lower[i+2][..words_lower[i+2].len()-1].to_string()
-                        } else {
-                            words_lower[i+2].clone()
-                        };
-
-                        if let (Some(teen_rule), Some(decade_rule)) = (
-                            STATIC_MAPPINGS.get(words_lower[i+1].as_str()),
-                            STATIC_MAPPINGS.get(base_word.as_str())
-                        ) {
-                            let is_teen = matches!(teen_rule.replacement, "13" | "14" | "15" | "16" | "17" | "18" | "19");
-                            let is_decade = matches!(decade_rule.replacement, "10" | "20" | "30" | "40" | "50" | "60" | "70" | "80" | "90");
-
-                            if is_teen && is_decade {
-                                let teen_val: i32 = teen_rule.replacement.parse().unwrap();
-                                let decade_val: i32 = decade_rule.replacement.parse().unwrap();
-                                number_result = format!("{}s", teen_val * 100 + decade_val);
-                                num_words_consumed = 3; // "number" + teen + decades
-                            }
-                        }
-                    }
-                }
-
-                // If not a multi-word pattern, check for single number word: "number forty" → "40"
-                if num_words_consumed == 0 {
-                    if let Some(num_rule) = STATIC_MAPPINGS.get(words_lower[i+1].as_str()) {
-                        // Check if it's actually a number (0-100)
-                        if num_rule.replacement.chars().all(|c| c.is_ascii_digit()) {
-                            number_result = num_rule.replacement.to_string();
-                            num_words_consumed = 2; // "number" + number_word
-                        }
-                    }
-                }
-
-                // If we matched a number pattern, output it
-                if num_words_consumed > 0 {
+            // Check for "number" or "digit" keyword trigger: "number forty two" → "42"
+            // v2: Uses NUMBER_WORDS lookup (not STATIC_MAPPINGS) since number words pass through standalone
+            let is_number_trigger = words_lower[i] == "number" || words_lower[i] == "digit";
+            if is_number_trigger && i + 1 < words.len() {
+                let (number_str, words_consumed) = parse_number_words(&words_lower, i + 1);
+                if words_consumed > 0 {
                     if !result.is_empty() {
                         let last_char = result.chars().last();
                         let needs_space = match last_char {
@@ -243,51 +286,40 @@ pub fn transform(text: &str) -> String {
                             result.push(' ');
                         }
                     }
-                    result.push_str(&number_result);
+                    result.push_str(&number_str);
                     last_rule_no_space_after = false;
                     last_rule_is_opening = false;
-                    i += num_words_consumed;
+                    i += 1 + words_consumed; // "number" + number words
                     continue;
                 }
             }
 
-            // Check for compound numbers WITHOUT "number" keyword: "forty two" → "42"
-            if i + 1 < words.len() {
-                if let (Some(tens_rule), Some(ones_rule)) = (
-                    STATIC_MAPPINGS.get(words_lower[i].as_str()),
-                    STATIC_MAPPINGS.get(words_lower[i+1].as_str())
-                ) {
-                    // Check if first is a tens number (20, 30, ..., 90) and second is ones (1-9)
-                    let is_tens = matches!(tens_rule.replacement, "20" | "30" | "40" | "50" | "60" | "70" | "80" | "90");
-                    let is_ones = matches!(ones_rule.replacement, "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9");
-
-                    if is_tens && is_ones {
-                        // Combine: tens + ones (e.g., "40" + "2" = "42")
-                        let tens_val: i32 = tens_rule.replacement.parse().unwrap();
-                        let ones_val: i32 = ones_rule.replacement.parse().unwrap();
-                        let combined = tens_val + ones_val;
-
-                        // Add space before the combined number if needed
-                        if !result.is_empty() {
-                            let last_char = result.chars().last();
-                            let needs_space = match last_char {
-                                Some('(') | Some('[') | Some('{') | Some('"') | Some('\'') | Some('`') => false,
-                                Some(c) if c.is_whitespace() => false,
-                                _ => true,
-                            };
-                            if needs_space {
-                                result.push(' ');
-                            }
+            // ========================================
+            // Contextual Number Triggers (v2): "line X", "version X", etc.
+            // These keep the prefix word: "line forty two" → "line 42"
+            // ========================================
+            if let Some(&prefix) = CONTEXTUAL_NUMBER_TRIGGERS.get(words_lower[i].as_str()) {
+                if i + 1 < words.len() {
+                    // Try to parse number words following the trigger
+                    let (number_str, words_consumed) = parse_number_words(&words_lower, i + 1);
+                    if words_consumed > 0 {
+                        // Output: prefix + space + number
+                        if !result.is_empty() && !result.ends_with(' ') {
+                            result.push(' ');
                         }
-
-                        result.push_str(&combined.to_string());
+                        result.push_str(prefix);
+                        result.push(' ');
+                        result.push_str(&number_str);
                         last_rule_no_space_after = false;
                         last_rule_is_opening = false;
-                        i += 2; // Skip both words
+                        i += 1 + words_consumed; // trigger + number words
                         continue;
                     }
                 }
             }
+
+            // v2: Compound numbers WITHOUT "number" keyword pass through unchanged
+            // Use "number forty two" or contextual trigger "line forty two" for conversion
 
             // Single word pattern or pass-through
             if let Some(rule) = STATIC_MAPPINGS.get(words_lower[i].as_str()) {
@@ -472,6 +504,94 @@ fn apply_rule_with_state(result: &mut String, rule: &TransformRule, state: &mut 
 mod tests {
     use super::*;
 
+    // ========================================
+    // Layer 1: Escape/Literal Detection Tests (v2)
+    // ========================================
+    #[test]
+    fn test_escape_literal() {
+        assert_eq!(transform("literal comma"), "comma");
+        assert_eq!(transform("literal period"), "period");
+        assert_eq!(transform("literal hash"), "hash");
+    }
+
+    #[test]
+    fn test_escape_the_word() {
+        assert_eq!(transform("the word period"), "period");
+        assert_eq!(transform("the word comma"), "comma");
+    }
+
+    #[test]
+    fn test_escape_literally() {
+        assert_eq!(transform("literally one"), "one");
+        assert_eq!(transform("literally two"), "two");
+    }
+
+    #[test]
+    fn test_escape_say() {
+        assert_eq!(transform("say hash"), "hash");
+        assert_eq!(transform("say plus"), "plus");
+    }
+
+    #[test]
+    fn test_escape_multi_word_pattern() {
+        // "open paren" is a 2-word pattern - escape should output both words
+        assert_eq!(transform("literal open paren"), "open paren");
+        assert_eq!(transform("literal question mark"), "question mark");
+    }
+
+    #[test]
+    fn test_escape_in_sentence() {
+        assert_eq!(transform("hello literal comma world"), "hello comma world");
+        assert_eq!(transform("in this literal period we saw growth"), "in this period we saw growth");
+    }
+
+    #[test]
+    fn test_escape_preserves_casing() {
+        assert_eq!(transform("literal Comma"), "Comma");
+        assert_eq!(transform("literal PERIOD"), "PERIOD");
+    }
+
+    // ========================================
+    // Layer 2: Explicit Phrase Matching Tests (v2)
+    // ========================================
+    #[test]
+    fn test_explicit_symbol_phrases() {
+        assert_eq!(transform("hash sign"), "#");
+        assert_eq!(transform("pound sign"), "#");
+        assert_eq!(transform("plus sign"), "+");
+        assert_eq!(transform("minus sign"), "-");
+        assert_eq!(transform("equals sign"), "=");
+        assert_eq!(transform("pipe sign"), "|");
+    }
+
+    #[test]
+    fn test_directional_arrows() {
+        assert_eq!(transform("right arrow"), "->");
+        assert_eq!(transform("left arrow"), "<-");
+        assert_eq!(transform("fat arrow"), "=>");
+        assert_eq!(transform("thin arrow"), "->");
+        assert_eq!(transform("up arrow"), "↑");
+        assert_eq!(transform("down arrow"), "↓");
+    }
+
+    #[test]
+    fn test_contextual_number_triggers() {
+        assert_eq!(transform("line forty two"), "line 42");
+        assert_eq!(transform("version two"), "version 2");
+        assert_eq!(transform("step one"), "step 1");
+        assert_eq!(transform("option three"), "option 3");
+    }
+
+    #[test]
+    fn test_contextual_error_codes() {
+        assert_eq!(transform("error four oh four"), "error 404");
+    }
+
+    #[test]
+    fn test_contextual_port_numbers() {
+        assert_eq!(transform("port eighty eighty"), "port 8080");
+    }
+
     #[test]
     fn test_basic_punctuation() {
         assert_eq!(transform("Hello comma world period"), "Hello, world.");
@@ -482,9 +602,10 @@ mod tests {
 
     #[test]
     fn test_operators() {
-        assert_eq!(transform("x equals y"), "x = y");
-        assert_eq!(transform("a plus b"), "a + b");
-        assert_eq!(transform("c minus d"), "c - d");
+        // v2: "equals" and "plus" pass through - use explicit triggers
+        assert_eq!(transform("x equals sign y"), "x = y");
+        assert_eq!(transform("a plus sign b"), "a + b");
+        assert_eq!(transform("c minus d"), "c - d");  // "minus" kept (unambiguous in context)
         assert_eq!(transform("e asterisk f"), "e * f");
     }
 
@@ -514,7 +635,8 @@ mod tests {
     fn test_multi_word_patterns() {
         assert_eq!(transform("What question mark"), "What?");
         assert_eq!(transform("Price dollar sign"), "Price $");
-        assert_eq!(transform("Hash hashtag trending"), "# trending");
+        // Note: "hash" alone converts to "#", so use just one trigger
+        assert_eq!(transform("hashtag trending"), "# trending");
     }
 
     #[test]
