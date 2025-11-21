@@ -10,12 +10,28 @@
 //! let result = transform("Hello comma world period");
 //! assert_eq!(result, "Hello, world.");
 //! ```
+//!
+//! # Text Transform v3 (New!)
+//!
+//! Evolution of v2 with intelligent fuzzy temporal matching:
+//! ```no_run
+//! use midstreamer_text_transform::v3::{TransformV3, TransformConfig};
+//!
+//! let config = TransformConfig::default();
+//! let mut transformer = TransformV3::new(config).unwrap();
+//!
+//! // Three-tier system: User overrides → Fuzzy matching → Static rules
+//! let result = transformer.transform("arkon");  // → "archon" (if learned)
+//! ```
 
 mod rules;
 mod spacing;
 
 #[cfg(feature = "pyo3")]
 mod python_bindings;
+
+// Text Transform v3: Intelligent pattern matching
+pub mod v3;
 
 pub use rules::TransformRule;
 use rules::{STATIC_MAPPINGS, NUMBER_WORDS, CONTEXTUAL_NUMBER_TRIGGERS};
