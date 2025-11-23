@@ -26,7 +26,7 @@ pub struct CacheSettings {
 impl HyprSettings {
     pub fn new() -> Result<Self, ConfigError> {
         let config_dir = Path::new("config");
-        
+
         let builder = Config::builder()
             // Start with default settings
             .add_source(File::from(config_dir.join("default.toml")).required(false))

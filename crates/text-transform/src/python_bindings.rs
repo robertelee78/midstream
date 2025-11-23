@@ -3,8 +3,8 @@
 //! Provides PyO3-based Python bindings for the text-transform crate,
 //! enabling <1ms overhead direct Rust->Python FFI calls.
 
-use pyo3::prelude::*;
 use pyo3::exceptions::PyValueError;
+use pyo3::prelude::*;
 
 /// Transform voice commands to symbols using MidStream text-transform engine.
 ///
@@ -121,7 +121,10 @@ fn midstreamer_transform(m: &Bound<'_, PyModule>) -> PyResult<()> {
 
     // Add module metadata
     m.add("__version__", env!("CARGO_PKG_VERSION"))?;
-    m.add("__doc__", "Fast text transformation for voice dictation using Rust FFI")?;
+    m.add(
+        "__doc__",
+        "Fast text transformation for voice dictation using Rust FFI",
+    )?;
 
     Ok(())
 }

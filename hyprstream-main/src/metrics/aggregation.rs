@@ -11,15 +11,15 @@
 //! functionality from the core aggregation module while adding metric-specific
 //! logic and optimizations.
 
+use crate::aggregation::{build_aggregate_query, AggregateFunction, GroupBy};
 use crate::metrics::MetricRecord;
-use crate::aggregation::{AggregateFunction, GroupBy, build_aggregate_query};
 use tonic::Status;
 
 /// The standard metric value columns used in aggregation queries
 const METRIC_VALUE_COLUMNS: [&str; 3] = [
     "value_running_window_sum",
     "value_running_window_avg",
-    "value_running_window_count"
+    "value_running_window_count",
 ];
 
 /// Applies the aggregation function to a set of metrics.
@@ -36,7 +36,10 @@ const METRIC_VALUE_COLUMNS: [&str; 3] = [
 /// # Returns
 ///
 /// The aggregated value as a float, or an error if the operation fails
-pub fn apply_function(function: AggregateFunction, metrics: &[MetricRecord]) -> Result<f64, Status> {
+pub fn apply_function(
+    function: AggregateFunction,
+    metrics: &[MetricRecord],
+) -> Result<f64, Status> {
     if metrics.is_empty() {
         return Ok(0.0);
     }
@@ -46,7 +49,7 @@ pub fn apply_function(function: AggregateFunction, metrics: &[MetricRecord]) -> 
         AggregateFunction::Avg => {
             let sum: f64 = metrics.iter().map(|m| m.value_running_window_avg).sum();
             Ok(sum / metrics.len() as f64)
-        },
+        }
         AggregateFunction::Min => Ok(metrics
             .iter()
             .map(|m| m.value_running_window_sum)
@@ -81,7 +84,8 @@ pub fn build_metrics_query(
     from_timestamp: i64,
     to_timestamp: Option<i64>,
 ) -> String {
-    let columns = METRIC_VALUE_COLUMNS.iter()
+    let columns = METRIC_VALUE_COLUMNS
+        .iter()
         .map(|&c| c.to_string())
         .collect::<Vec<_>>();
 
@@ -94,4 +98,4 @@ pub fn build_metrics_query(
         Some(from_timestamp),
         to_timestamp,
     )
-} 
+}

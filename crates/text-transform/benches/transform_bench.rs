@@ -1,19 +1,13 @@
-use criterion::{black_box, criterion_group, criterion_main, Criterion, BenchmarkId};
+use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
 use midstreamer_text_transform::transform;
 
 fn bench_simple_transforms(c: &mut Criterion) {
-    let inputs = vec![
-        "Hello comma world period",
-        "Stop period",
-        "x equals y",
-    ];
+    let inputs = vec!["Hello comma world period", "Stop period", "x equals y"];
 
     for input in inputs {
-        c.bench_with_input(
-            BenchmarkId::new("simple", input),
-            &input,
-            |b, i| b.iter(|| transform(black_box(i)))
-        );
+        c.bench_with_input(BenchmarkId::new("simple", input), &input, |b, i| {
+            b.iter(|| transform(black_box(i)))
+        });
     }
 }
 
@@ -25,11 +19,9 @@ fn bench_complex_transforms(c: &mut Criterion) {
     ];
 
     for input in inputs {
-        c.bench_with_input(
-            BenchmarkId::new("complex", input),
-            &input,
-            |b, i| b.iter(|| transform(black_box(i)))
-        );
+        c.bench_with_input(BenchmarkId::new("complex", input), &input, |b, i| {
+            b.iter(|| transform(black_box(i)))
+        });
     }
 }
 
@@ -51,5 +43,10 @@ fn bench_batch_processing(c: &mut Criterion) {
     });
 }
 
-criterion_group!(benches, bench_simple_transforms, bench_complex_transforms, bench_batch_processing);
+criterion_group!(
+    benches,
+    bench_simple_transforms,
+    bench_complex_transforms,
+    bench_batch_processing
+);
 criterion_main!(benches);

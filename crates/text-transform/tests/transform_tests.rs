@@ -78,7 +78,7 @@ fn test_operators_division() {
 fn test_operators_special() {
     assert_eq!(transform("path backslash file"), "path \\ file");
     // "back slash" (two words) removed - only "backslash" in PRD
-    assert_eq!(transform("a pipe sign b"), "a | b");  // Per PRD: requires "pipe sign"
+    assert_eq!(transform("a pipe sign b"), "a | b"); // Per PRD: requires "pipe sign"
     assert_eq!(transform("x ampersand y"), "x & y");
     // "and sign" removed - not in PRD
 }
@@ -113,7 +113,7 @@ fn test_symbols_basic() {
 fn test_symbols_hash() {
     // Per v2 PRD: "hash" alone passes through, need "hash sign"
     assert_eq!(transform("hash sign tag"), "# tag");
-    assert_eq!(transform("hashtag trending"), "# trending");  // "hashtag" kept per PRD
+    assert_eq!(transform("hashtag trending"), "# trending"); // "hashtag" kept per PRD
     assert_eq!(transform("pound sign define"), "# define");
 }
 
@@ -174,10 +174,7 @@ fn test_real_world_examples() {
     );
 
     // Python - per PRD, "double equals" is unambiguous
-    assert_eq!(
-        transform("if x double equals y colon"),
-        "if x == y:"
-    );
+    assert_eq!(transform("if x double equals y colon"), "if x == y:");
 
     // Email - period attaches to previous word (correct behavior)
     assert_eq!(
@@ -186,10 +183,7 @@ fn test_real_world_examples() {
     );
 
     // Array access
-    assert_eq!(
-        transform("arr open bracket i close bracket"),
-        "arr[i]"
-    );
+    assert_eq!(transform("arr open bracket i close bracket"), "arr[i]");
 }
 
 #[test]
@@ -230,10 +224,10 @@ fn test_empty_input() {
 fn test_v2_pass_through() {
     // Per v2 PRD: These ambiguous words pass through unchanged
     assert_eq!(transform("hash the password"), "hash the password");
-    assert_eq!(transform("add one more"), "add one more");  // number words pass through
-    assert_eq!(transform("plus that feature"), "plus that feature");  // "plus" passes through
-    assert_eq!(transform("doctor this code"), "doctor this code");  // titles pass through
-    assert_eq!(transform("equals sign test"), "= test");  // but "equals sign" still works
+    assert_eq!(transform("add one more"), "add one more"); // number words pass through
+    assert_eq!(transform("plus that feature"), "plus that feature"); // "plus" passes through
+    assert_eq!(transform("doctor this code"), "doctor this code"); // titles pass through
+    assert_eq!(transform("equals sign test"), "= test"); // but "equals sign" still works
 }
 
 #[test]

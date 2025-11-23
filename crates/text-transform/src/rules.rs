@@ -18,21 +18,41 @@ pub struct TransformRule {
 
 impl TransformRule {
     const fn new(replacement: &'static str, attach_to_prev: bool) -> Self {
-        Self { replacement, attach_to_prev, is_opening: false, no_space_after: false }
+        Self {
+            replacement,
+            attach_to_prev,
+            is_opening: false,
+            no_space_after: false,
+        }
     }
 
     const fn opening(replacement: &'static str) -> Self {
-        Self { replacement, attach_to_prev: false, is_opening: true, no_space_after: false }
+        Self {
+            replacement,
+            attach_to_prev: false,
+            is_opening: true,
+            no_space_after: false,
+        }
     }
 
     /// Compact: remove space before AND after (for URLs like example.com)
     const fn compact(replacement: &'static str) -> Self {
-        Self { replacement, attach_to_prev: true, is_opening: false, no_space_after: true }
+        Self {
+            replacement,
+            attach_to_prev: true,
+            is_opening: false,
+            no_space_after: true,
+        }
     }
 
     /// No space after only (space before is normal) - for CLI flags like "-m"
     const fn no_space_after(replacement: &'static str) -> Self {
-        Self { replacement, attach_to_prev: false, is_opening: false, no_space_after: true }
+        Self {
+            replacement,
+            attach_to_prev: false,
+            is_opening: false,
+            no_space_after: true,
+        }
     }
 }
 
@@ -95,7 +115,7 @@ pub static STATIC_MAPPINGS: Lazy<HashMap<&'static str, TransformRule>> = Lazy::n
     map.insert("ampersand", TransformRule::new("&", false));
     map.insert("asterisk", TransformRule::new("*", false));
     // v2: "hash" and "pound" removed - ambiguous, use "hash sign" or "pound sign"
-    map.insert("hashtag", TransformRule::new("#", false));  // Keep: unambiguous social media term
+    map.insert("hashtag", TransformRule::new("#", false)); // Keep: unambiguous social media term
     map.insert("forward slash", TransformRule::new("/", false));
     map.insert("slash", TransformRule::new("/", false));
     map.insert("backslash", TransformRule::new("\\", false));
@@ -244,14 +264,15 @@ pub static NUMBER_WORDS: Lazy<HashMap<&'static str, i32>> = Lazy::new(|| {
 
 /// Contextual number triggers that keep the prefix word (v2)
 /// "line forty two" → "line 42", "version two" → "version 2"
-pub static CONTEXTUAL_NUMBER_TRIGGERS: Lazy<HashMap<&'static str, &'static str>> = Lazy::new(|| {
-    let mut map = HashMap::with_capacity(8);
-    map.insert("line", "line");
-    map.insert("version", "version");
-    map.insert("step", "step");
-    map.insert("option", "option");
-    map.insert("error", "error");
-    map.insert("port", "port");
-    map.insert("release", "release");
-    map
-});
+pub static CONTEXTUAL_NUMBER_TRIGGERS: Lazy<HashMap<&'static str, &'static str>> =
+    Lazy::new(|| {
+        let mut map = HashMap::with_capacity(8);
+        map.insert("line", "line");
+        map.insert("version", "version");
+        map.insert("step", "step");
+        map.insert("option", "option");
+        map.insert("error", "error");
+        map.insert("port", "port");
+        map.insert("release", "release");
+        map
+    });

@@ -1,19 +1,19 @@
 //! MidStream: Real-Time Large Language Model Streaming Platform
-//! 
+//!
 //! This library provides functionality for real-time LLM response streaming,
 //! inflight data analysis, and integration with external tools.
-//! 
+//!
 //! # Example
-//! 
+//!
 //! ```rust,no_run
 //! use midstream::{Midstream, HyprSettings, HyprServiceImpl, StreamProcessor, LLMClient};
 //! use futures::stream::BoxStream;
 //! use futures::stream::iter;
 //! use std::time::Duration;
-//! 
+//!
 //! // Example LLM client implementation
 //! struct ExampleLLMClient;
-//! 
+//!
 //! impl LLMClient for ExampleLLMClient {
 //!     fn stream(&self) -> BoxStream<'static, String> {
 //!         Box::pin(iter(vec![
@@ -23,7 +23,7 @@
 //!         ]))
 //!     }
 //! }
-//! 
+//!
 //! #[tokio::main]
 //! async fn main() -> Result<(), Box<dyn std::error::Error>> {
 //!     // Initialize settings
@@ -58,46 +58,21 @@
 //! ```
 
 pub mod config;
-pub mod midstream;
 pub mod hypr_service;
-pub mod tests;
 pub mod lean_agentic;
+pub mod midstream;
+pub mod tests;
 
 pub use config::HyprSettings;
-pub use midstream::{
-    Midstream,
-    StreamProcessor,
-    LLMMessage,
-    LLMClient,
-    HyprService,
-    ToolIntegration,
-    Intent,
-    MetricRecord,
-    TimeWindow,
-    AggregateFunction,
-};
 pub use hypr_service::HyprServiceImpl;
+pub use midstream::{
+    AggregateFunction, HyprService, Intent, LLMClient, LLMMessage, MetricRecord, Midstream,
+    StreamProcessor, TimeWindow, ToolIntegration,
+};
 
 // Lean Agentic Learning System exports
 pub use lean_agentic::{
-    LeanAgenticSystem,
-    LeanAgenticConfig,
-    FormalReasoner,
-    Theorem,
-    Proof,
-    ProofStep,
-    AgenticLoop,
-    Action,
-    Observation,
-    Plan,
-    LearningSignal,
-    KnowledgeGraph,
-    Entity,
-    Relation,
-    StreamLearner,
-    OnlineModel,
-    AdaptationStrategy,
-    AgentState,
-    Context as AgentContext,
-    Reward,
+    Action, AdaptationStrategy, AgentState, AgenticLoop, Context as AgentContext, Entity,
+    FormalReasoner, KnowledgeGraph, LeanAgenticConfig, LeanAgenticSystem, LearningSignal,
+    Observation, OnlineModel, Plan, Proof, ProofStep, Relation, Reward, StreamLearner, Theorem,
 };

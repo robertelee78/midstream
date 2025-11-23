@@ -3,10 +3,10 @@
 //! Provides proven transformation rules from v2 as a fallback
 //! when fuzzy matching doesn't find a suitable match.
 
-use std::collections::HashMap;
-use std::path::Path;
-use std::fs;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use std::fs;
+use std::path::Path;
 
 use crate::v3::{Result, TransformError, TransformMode};
 
@@ -166,15 +166,13 @@ impl StaticRules {
             return Ok(0);
         }
 
-        let content = fs::read_to_string(path)
-            .map_err(|e| TransformError::PatternLoadError(
-                format!("Failed to read {}: {}", path.display(), e)
-            ))?;
+        let content = fs::read_to_string(path).map_err(|e| {
+            TransformError::PatternLoadError(format!("Failed to read {}: {}", path.display(), e))
+        })?;
 
-        let rules_file: StaticRulesFile = toml::from_str(&content)
-            .map_err(|e| TransformError::PatternLoadError(
-                format!("Failed to parse TOML: {}", e)
-            ))?;
+        let rules_file: StaticRulesFile = toml::from_str(&content).map_err(|e| {
+            TransformError::PatternLoadError(format!("Failed to parse TOML: {}", e))
+        })?;
 
         let count = rules_file.rules.len();
 
@@ -189,10 +187,8 @@ impl StaticRules {
     pub fn add_rule(&mut self, rule: StaticRule) {
         // Build case-insensitive lookup if needed
         if !rule.case_sensitive {
-            self.case_insensitive_map.insert(
-                rule.from.to_lowercase(),
-                rule.to.clone(),
-            );
+            self.case_insensitive_map
+                .insert(rule.from.to_lowercase(), rule.to.clone());
         }
 
         // Organize by mode
@@ -389,7 +385,9 @@ mod tests {
     #[test]
     fn test_load_rules_file() {
         let mut temp_file = NamedTempFile::new().unwrap();
-        writeln!(temp_file, r#"
+        writeln!(
+            temp_file,
+            r#"
 [[rules]]
 from = "arkon"
 to = "archon"
@@ -400,7 +398,9 @@ case_sensitive = false
 [[rules]]
 from = "teh"
 to = "the"
-        "#).unwrap();
+        "#
+        )
+        .unwrap();
 
         let mut rules = StaticRules::new();
         let count = rules.load_rules_file(temp_file.path()).unwrap();

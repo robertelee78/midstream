@@ -21,9 +21,9 @@
 use clap::Parser;
 use config::{Config, ConfigError};
 use serde::Deserialize;
+use std::collections::HashMap;
 use std::env;
 use std::path::PathBuf;
-use std::collections::HashMap;
 
 const DEFAULT_CONFIG: &str = include_str!("../config/default.toml");
 const DEFAULT_CONFIG_PATH: &str = "/etc/hyprstream/config.toml";
@@ -199,7 +199,8 @@ impl Settings {
         // Load system configuration if it exists
         if let Ok(metadata) = std::fs::metadata(DEFAULT_CONFIG_PATH) {
             if metadata.is_file() {
-                builder = builder.add_source(config::File::from(PathBuf::from(DEFAULT_CONFIG_PATH)));
+                builder =
+                    builder.add_source(config::File::from(PathBuf::from(DEFAULT_CONFIG_PATH)));
             }
         }
 

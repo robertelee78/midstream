@@ -34,9 +34,10 @@ impl SpacingContext {
 
             // Before operators, need space
             (Some(c), _) if c.is_alphanumeric() => match replacement {
-                "=" | "==" | "===" | "!=" | "<" | ">" | "<=" | ">="
-                | "+" | "-" | "*" | "/" | "%" | "&" | "&&" | "|" | "||"
-                | "^" | "~" | "@" | "#" | "$" => Self::NeedSpaceBefore,
+                "=" | "==" | "===" | "!=" | "<" | ">" | "<=" | ">=" | "+" | "-" | "*" | "/"
+                | "%" | "&" | "&&" | "|" | "||" | "^" | "~" | "@" | "#" | "$" => {
+                    Self::NeedSpaceBefore
+                }
 
                 // Opening brackets after words
                 "(" | "[" | "{" => Self::NeedSpaceBefore,
@@ -65,24 +66,45 @@ mod tests {
 
     #[test]
     fn test_empty_result() {
-        assert_eq!(SpacingContext::analyze("", "="), SpacingContext::NoSpaceBefore);
+        assert_eq!(
+            SpacingContext::analyze("", "="),
+            SpacingContext::NoSpaceBefore
+        );
     }
 
     #[test]
     fn test_after_opening_bracket() {
-        assert_eq!(SpacingContext::analyze("test(", "x"), SpacingContext::NoSpaceBefore);
-        assert_eq!(SpacingContext::analyze("arr[", "0"), SpacingContext::NoSpaceBefore);
+        assert_eq!(
+            SpacingContext::analyze("test(", "x"),
+            SpacingContext::NoSpaceBefore
+        );
+        assert_eq!(
+            SpacingContext::analyze("arr[", "0"),
+            SpacingContext::NoSpaceBefore
+        );
     }
 
     #[test]
     fn test_before_operators() {
-        assert_eq!(SpacingContext::analyze("x", "="), SpacingContext::NeedSpaceBefore);
-        assert_eq!(SpacingContext::analyze("a", "+"), SpacingContext::NeedSpaceBefore);
-        assert_eq!(SpacingContext::analyze("b", "=="), SpacingContext::NeedSpaceBefore);
+        assert_eq!(
+            SpacingContext::analyze("x", "="),
+            SpacingContext::NeedSpaceBefore
+        );
+        assert_eq!(
+            SpacingContext::analyze("a", "+"),
+            SpacingContext::NeedSpaceBefore
+        );
+        assert_eq!(
+            SpacingContext::analyze("b", "=="),
+            SpacingContext::NeedSpaceBefore
+        );
     }
 
     #[test]
     fn test_quotes() {
-        assert_eq!(SpacingContext::analyze("say", "\""), SpacingContext::NeedSpaceBefore);
+        assert_eq!(
+            SpacingContext::analyze("say", "\""),
+            SpacingContext::NeedSpaceBefore
+        );
     }
 }

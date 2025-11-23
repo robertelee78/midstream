@@ -34,7 +34,7 @@ mod python_bindings;
 pub mod v3;
 
 pub use rules::TransformRule;
-use rules::{STATIC_MAPPINGS, NUMBER_WORDS, CONTEXTUAL_NUMBER_TRIGGERS};
+use rules::{CONTEXTUAL_NUMBER_TRIGGERS, NUMBER_WORDS, STATIC_MAPPINGS};
 
 /// Parse number words starting at `start_idx` and return (number_string, words_consumed)
 ///
@@ -52,7 +52,7 @@ fn parse_number_words(words_lower: &[String], start_idx: usize) -> (String, usiz
     // Helper: Check number type
     let is_teen = |n: i32| n >= 13 && n <= 19;
     let is_decade = |n: i32| n >= 10 && n <= 90 && n % 10 == 0;
-    let is_tens = |n: i32| n >= 20 && n <= 90 && n % 10 == 0;  // 20, 30, ..., 90
+    let is_tens = |n: i32| n >= 20 && n <= 90 && n % 10 == 0; // 20, 30, ..., 90
     let is_ones = |n: i32| n >= 1 && n <= 9;
 
     // Try 3-word patterns first
@@ -84,9 +84,9 @@ fn parse_number_words(words_lower: &[String], start_idx: usize) -> (String, usiz
         if second_word.ends_with('s') {
             // Try to derive base word: "fifties" → "fifty", "eighties" → "eighty"
             let base = if second_word.ends_with("ies") && second_word.len() > 3 {
-                format!("{}y", &second_word[..second_word.len()-3])
+                format!("{}y", &second_word[..second_word.len() - 3])
             } else {
-                second_word[..second_word.len()-1].to_string()
+                second_word[..second_word.len() - 1].to_string()
             };
 
             if let (Some(&first), Some(&second)) = (
@@ -235,11 +235,11 @@ pub fn transform(text: &str) -> String {
             key_buf.clear();
             key_buf.push_str(&words_lower[i]);
             key_buf.push(' ');
-            key_buf.push_str(&words_lower[i+1]);
+            key_buf.push_str(&words_lower[i + 1]);
             key_buf.push(' ');
-            key_buf.push_str(&words_lower[i+2]);
+            key_buf.push_str(&words_lower[i + 2]);
             key_buf.push(' ');
-            key_buf.push_str(&words_lower[i+3]);
+            key_buf.push_str(&words_lower[i + 3]);
 
             if let Some(rule) = STATIC_MAPPINGS.get(key_buf.as_str()) {
                 apply_rule_with_state(&mut result, rule, &mut quote_state);
@@ -255,9 +255,9 @@ pub fn transform(text: &str) -> String {
             key_buf.clear();
             key_buf.push_str(&words_lower[i]);
             key_buf.push(' ');
-            key_buf.push_str(&words_lower[i+1]);
+            key_buf.push_str(&words_lower[i + 1]);
             key_buf.push(' ');
-            key_buf.push_str(&words_lower[i+2]);
+            key_buf.push_str(&words_lower[i + 2]);
 
             if let Some(rule) = STATIC_MAPPINGS.get(key_buf.as_str()) {
                 apply_rule_with_state(&mut result, rule, &mut quote_state);
@@ -273,7 +273,7 @@ pub fn transform(text: &str) -> String {
             key_buf.clear();
             key_buf.push_str(&words_lower[i]);
             key_buf.push(' ');
-            key_buf.push_str(&words_lower[i+1]);
+            key_buf.push_str(&words_lower[i + 1]);
 
             if let Some(rule) = STATIC_MAPPINGS.get(key_buf.as_str()) {
                 apply_rule_with_state(&mut result, rule, &mut quote_state);
@@ -294,7 +294,8 @@ pub fn transform(text: &str) -> String {
                     if !result.is_empty() {
                         let last_char = result.chars().last();
                         let needs_space = match last_char {
-                            Some('(') | Some('[') | Some('{') | Some('"') | Some('\'') | Some('`') => false,
+                            Some('(') | Some('[') | Some('{') | Some('"') | Some('\'')
+                            | Some('`') => false,
                             Some(c) if c.is_whitespace() => false,
                             _ => true,
                         };
@@ -463,7 +464,21 @@ fn apply_rule_with_state(result: &mut String, rule: &TransformRule, state: &mut 
             if should_attach {
                 // Check if last character is an operator that needs space after it
                 let last_char = result.chars().last();
-                let after_operator = matches!(last_char, Some('=') | Some('<') | Some('>') | Some('+') | Some('-') | Some('*') | Some('/') | Some('&') | Some('|') | Some('!') | Some('%') | Some('^'));
+                let after_operator = matches!(
+                    last_char,
+                    Some('=')
+                        | Some('<')
+                        | Some('>')
+                        | Some('+')
+                        | Some('-')
+                        | Some('*')
+                        | Some('/')
+                        | Some('&')
+                        | Some('|')
+                        | Some('!')
+                        | Some('%')
+                        | Some('^')
+                );
 
                 if after_operator {
                     // Add space after operator before bracket: "x = [" not "x =["
@@ -505,7 +520,7 @@ fn apply_rule_with_state(result: &mut String, rule: &TransformRule, state: &mut 
             let needs_space = match last_char {
                 Some('(') | Some('[') | Some('{') | Some('"') | Some('\'') | Some('`') => false,
                 Some(c) if c.is_whitespace() => false,
-                _ => true,  // This includes operators like < > = + - * /
+                _ => true, // This includes operators like < > = + - * /
             };
 
             if needs_space {
@@ -558,7 +573,10 @@ mod tests {
     #[test]
     fn test_escape_in_sentence() {
         assert_eq!(transform("hello literal comma world"), "hello comma world");
-        assert_eq!(transform("in this literal period we saw growth"), "in this period we saw growth");
+        assert_eq!(
+            transform("in this literal period we saw growth"),
+            "in this period we saw growth"
+        );
     }
 
     #[test]
@@ -621,7 +639,7 @@ mod tests {
         // v2: "equals" and "plus" pass through - use explicit triggers
         assert_eq!(transform("x equals sign y"), "x = y");
         assert_eq!(transform("a plus sign b"), "a + b");
-        assert_eq!(transform("c minus d"), "c - d");  // "minus" kept (unambiguous in context)
+        assert_eq!(transform("c minus d"), "c - d"); // "minus" kept (unambiguous in context)
         assert_eq!(transform("e asterisk f"), "e * f");
     }
 
@@ -683,6 +701,10 @@ mod tests {
         let avg_micros = elapsed.as_micros() / 1000;
 
         // Should be well under 5000 microseconds (5ms) per call
-        assert!(avg_micros < 5000, "Average: {}μs (target: <5000μs)", avg_micros);
+        assert!(
+            avg_micros < 5000,
+            "Average: {}μs (target: <5000μs)",
+            avg_micros
+        );
     }
 }

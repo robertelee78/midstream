@@ -7,10 +7,7 @@
 
 use std::collections::HashMap;
 
-use crate::v3::{
-    Result, TransformConfig, TransformMode,
-    FuzzyMatcher, StaticRules,
-};
+use crate::v3::{FuzzyMatcher, Result, StaticRules, TransformConfig, TransformMode};
 
 /// User override (highest priority corrections)
 #[derive(Debug, Clone)]
@@ -305,8 +302,7 @@ mod tests {
 
     #[test]
     fn test_learn_correction() {
-        let config = TransformConfig::default()
-            .with_fuzzy_enabled(true);
+        let config = TransformConfig::default().with_fuzzy_enabled(true);
         let mut transformer = TransformV3::new(config).unwrap();
 
         // Learn a correction

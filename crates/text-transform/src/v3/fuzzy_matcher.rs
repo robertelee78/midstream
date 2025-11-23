@@ -4,10 +4,10 @@
 //! intelligent pattern matching based on historical correction patterns.
 
 use midstreamer_temporal_compare::TemporalComparator;
-use std::collections::HashMap;
-use std::path::Path;
-use std::fs;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use std::fs;
+use std::path::Path;
 
 use crate::v3::{Result, TransformError};
 
@@ -26,7 +26,9 @@ pub struct CorrectionPattern {
     pub context: Option<String>,
 }
 
-fn default_count() -> usize { 1 }
+fn default_count() -> usize {
+    1
+}
 
 /// Corrections file format (corrections.toml)
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -67,20 +69,19 @@ impl FuzzyMatcher {
             return Ok(0);
         }
 
-        let content = fs::read_to_string(path)
-            .map_err(|e| TransformError::PatternLoadError(
-                format!("Failed to read {}: {}", path.display(), e)
-            ))?;
+        let content = fs::read_to_string(path).map_err(|e| {
+            TransformError::PatternLoadError(format!("Failed to read {}: {}", path.display(), e))
+        })?;
 
-        let corrections_file: CorrectionsFile = toml::from_str(&content)
-            .map_err(|e| TransformError::PatternLoadError(
-                format!("Failed to parse TOML: {}", e)
-            ))?;
+        let corrections_file: CorrectionsFile = toml::from_str(&content).map_err(|e| {
+            TransformError::PatternLoadError(format!("Failed to parse TOML: {}", e))
+        })?;
 
         let count = corrections_file.corrections.len();
 
         for correction in corrections_file.corrections {
-            self.patterns.insert(correction.from.clone(), correction.to.clone());
+            self.patterns
+                .insert(correction.from.clone(), correction.to.clone());
         }
 
         Ok(count)
@@ -113,7 +114,11 @@ impl FuzzyMatcher {
             let pattern_bytes: Vec<u8> = pattern_str.bytes().collect();
 
             // Calculate similarity using find_similar_generic
-            let matches = match self.comparator.find_similar_generic(&text_bytes, &pattern_bytes, self.threshold) {
+            let matches = match self.comparator.find_similar_generic(
+                &text_bytes,
+                &pattern_bytes,
+                self.threshold,
+            ) {
                 Ok(m) => m,
                 Err(_) => continue,
             };
@@ -226,7 +231,9 @@ mod tests {
     #[test]
     fn test_load_corrections_from_toml() {
         let mut temp_file = NamedTempFile::new().unwrap();
-        writeln!(temp_file, r#"
+        writeln!(
+            temp_file,
+            r#"
 [[corrections]]
 from = "arkon"
 to = "archon"
@@ -236,7 +243,9 @@ count = 5
 from = "teh"
 to = "the"
 count = 3
-        "#).unwrap();
+        "#
+        )
+        .unwrap();
 
         let mut matcher = FuzzyMatcher::new(100, 1000, 0.8);
         let count = matcher.load_corrections(temp_file.path()).unwrap();

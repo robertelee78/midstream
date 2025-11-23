@@ -1,9 +1,12 @@
 #[cfg(test)]
 mod tests {
-    use crate::midstream::{Midstream, StreamProcessor, Intent, LLMClient, HyprService, ToolIntegration, MetricRecord, TimeWindow, AggregateFunction};
-    use std::time::Duration;
-    use mockall::*;
+    use crate::midstream::{
+        AggregateFunction, HyprService, Intent, LLMClient, MetricRecord, Midstream,
+        StreamProcessor, TimeWindow, ToolIntegration,
+    };
     use futures::stream::{self, BoxStream};
+    use mockall::*;
+    use std::time::Duration;
 
     type BoxError = Box<dyn std::error::Error>;
 
@@ -34,24 +37,18 @@ mod tests {
     async fn test_stream_processing_with_metrics() {
         let mut mock_llm = MockLLMClient::new();
         let mut mock_hypr = MockHyprService::new();
-        
-        mock_llm.expect_stream()
-            .times(1)
-            .return_once(move || {
-                Box::pin(stream::iter(vec![
-                    "Process".to_string(),
-                    "this".to_string(),
-                    "stream".to_string(),
-                ]))
-            });
 
-        mock_hypr.expect_ingest_metric()
-            .returning(|_| Ok(()));
+        mock_llm.expect_stream().times(1).return_once(move || {
+            Box::pin(stream::iter(vec![
+                "Process".to_string(),
+                "this".to_string(),
+                "stream".to_string(),
+            ]))
+        });
 
-        let midstream = Midstream::new(
-            Box::new(mock_llm),
-            Box::new(mock_hypr),
-        );
+        mock_hypr.expect_ingest_metric().returning(|_| Ok(()));
+
+        let midstream = Midstream::new(Box::new(mock_llm), Box::new(mock_hypr));
 
         let result = midstream.process_stream().await;
         assert!(result.is_ok());
@@ -65,16 +62,16 @@ mod tests {
         let mut mock_llm = MockLLMClient::new();
         let mut mock_hypr = MockHyprService::new();
 
-        mock_hypr.expect_query_aggregate()
+        mock_hypr
+            .expect_query_aggregate()
             .times(1)
             .return_once(|_, _| Ok(0.75));
 
-        let midstream = Midstream::new(
-            Box::new(mock_llm),
-            Box::new(mock_hypr),
-        );
+        let midstream = Midstream::new(Box::new(mock_llm), Box::new(mock_hypr));
 
-        let avg = midstream.get_average_sentiment(Duration::from_secs(300)).await;
+        let avg = midstream
+            .get_average_sentiment(Duration::from_secs(300))
+            .await;
         assert!(avg.is_ok());
         assert_eq!(avg.unwrap(), 0.75);
     }
@@ -84,24 +81,24 @@ mod tests {
         let mut mock_llm = MockLLMClient::new();
         let mut mock_hypr = MockHyprService::new();
 
-        mock_hypr.expect_ingest_metric()
+        mock_hypr
+            .expect_ingest_metric()
             .times(1)
             .return_once(|_| Err("Ingestion error".into()));
 
-        mock_llm.expect_stream()
+        mock_llm
+            .expect_stream()
             .times(1)
-            .return_once(|| {
-                Box::pin(stream::iter(vec!["test message".to_string()]))
-            });
+            .return_once(|| Box::pin(stream::iter(vec!["test message".to_string()])));
 
-        let midstream = Midstream::new(
-            Box::new(mock_llm),
-            Box::new(mock_hypr),
-        );
+        let midstream = Midstream::new(Box::new(mock_llm), Box::new(mock_hypr));
 
         let result = midstream.process_stream().await;
         assert!(result.is_err());
-        assert!(result.unwrap_err().to_string().contains("Failed to ingest metric"));
+        assert!(result
+            .unwrap_err()
+            .to_string()
+            .contains("Failed to ingest metric"));
     }
 
     #[tokio::test]
@@ -109,16 +106,12 @@ mod tests {
         let mut mock_llm = MockLLMClient::new();
         let mut mock_hypr = MockHyprService::new();
 
-        mock_llm.expect_stream()
+        mock_llm
+            .expect_stream()
             .times(1)
-            .return_once(|| {
-                Box::pin(stream::iter(Vec::<String>::new()))
-            });
+            .return_once(|| Box::pin(stream::iter(Vec::<String>::new())));
 
-        let midstream = Midstream::new(
-            Box::new(mock_llm),
-            Box::new(mock_hypr),
-        );
+        let midstream = Midstream::new(Box::new(mock_llm), Box::new(mock_hypr));
 
         let result = midstream.process_stream().await;
         assert!(result.is_ok());
@@ -129,25 +122,20 @@ mod tests {
     async fn test_large_message_processing() {
         let mut mock_llm = MockLLMClient::new();
         let mut mock_hypr = MockHyprService::new();
-        
+
         let large_message = "x".repeat(1_000_000);
-        mock_llm.expect_stream()
+        mock_llm
+            .expect_stream()
             .times(1)
-            .return_once(move || {
-                Box::pin(stream::iter(vec![large_message.clone()]))
-            });
+            .return_once(move || Box::pin(stream::iter(vec![large_message.clone()])));
 
-        mock_hypr.expect_ingest_metric()
-            .returning(|_| Ok(()));
+        mock_hypr.expect_ingest_metric().returning(|_| Ok(()));
 
-        let midstream = Midstream::new(
-            Box::new(mock_llm),
-            Box::new(mock_hypr),
-        );
+        let midstream = Midstream::new(Box::new(mock_llm), Box::new(mock_hypr));
 
         let result = midstream.process_stream().await;
         assert!(result.is_ok());
-        
+
         let messages = result.unwrap();
         assert_eq!(messages.len(), 1);
         assert_eq!(messages[0].content.len(), 1_000_000);
@@ -159,20 +147,17 @@ mod tests {
         let mut mock_hypr = MockHyprService::new();
         let mut mock_tool = MockToolClient::new();
 
-        mock_llm.expect_stream()
+        mock_llm
+            .expect_stream()
             .times(1)
-            .return_once(|| {
-                Box::pin(stream::iter(vec![
-                    "URGENT: What's the weather".to_string(),
-                ]))
-            });
+            .return_once(|| Box::pin(stream::iter(vec!["URGENT: What's the weather".to_string()])));
 
-        mock_tool.expect_handle_weather_intent()
+        mock_tool
+            .expect_handle_weather_intent()
             .times(1)
             .return_once(|_| Ok("Weather info (urgent response)".to_string()));
 
-        mock_hypr.expect_ingest_metric()
-            .returning(|_| Ok(()));
+        mock_hypr.expect_ingest_metric().returning(|_| Ok(()));
 
         let midstream = Midstream::with_tool_integration(
             Box::new(mock_llm),
@@ -185,7 +170,11 @@ mod tests {
         let messages = result.unwrap();
 
         assert_eq!(messages[0].intent, Some(Intent::Weather));
-        assert!(messages[0].tool_response.as_ref().unwrap().contains("urgent response"));
+        assert!(messages[0]
+            .tool_response
+            .as_ref()
+            .unwrap()
+            .contains("urgent response"));
     }
 
     #[tokio::test]
@@ -193,19 +182,18 @@ mod tests {
         let mut mock_llm = MockLLMClient::new();
         let mut mock_hypr = MockHyprService::new();
 
-        mock_llm.expect_stream()
+        mock_llm
+            .expect_stream()
             .times(1)
-            .return_once(|| {
-                Box::pin(stream::iter(vec!["".to_string()]))
-            });
+            .return_once(|| Box::pin(stream::iter(vec!["".to_string()])));
 
-        let midstream = Midstream::new(
-            Box::new(mock_llm),
-            Box::new(mock_hypr),
-        );
+        let midstream = Midstream::new(Box::new(mock_llm), Box::new(mock_hypr));
 
         let result = midstream.process_stream().await;
         assert!(result.is_err());
-        assert!(result.unwrap_err().to_string().contains("Empty message content"));
+        assert!(result
+            .unwrap_err()
+            .to_string()
+            .contains("Empty message content"));
     }
 }

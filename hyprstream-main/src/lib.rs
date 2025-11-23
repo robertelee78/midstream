@@ -71,13 +71,13 @@ For detailed configuration options and examples, see:
 - [`examples`](examples/) directory for more usage examples
 */
 
-pub mod metrics;
-pub mod storage;
-pub mod service;
-pub mod config;
 pub mod aggregation;
+pub mod config;
+pub mod metrics;
+pub mod service;
+pub mod storage;
 
+pub use aggregation::{AggregateFunction, AggregateResult, GroupBy, TimeWindow};
+pub use metrics::MetricRecord;
 pub use service::FlightSqlService;
 pub use storage::StorageBackend;
-pub use metrics::MetricRecord;
-pub use aggregation::{TimeWindow, AggregateFunction, GroupBy, AggregateResult};

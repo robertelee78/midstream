@@ -61,7 +61,10 @@ fn test_year_patterns() {
     assert_eq!(transform("number nineteen eighties"), "1980s");
 
     // In sentences
-    assert_eq!(transform("Born in number nineteen eighty five"), "Born in 1985");
+    assert_eq!(
+        transform("Born in number nineteen eighty five"),
+        "Born in 1985"
+    );
 }
 
 #[test]
@@ -74,6 +77,12 @@ fn test_hundreds() {
 #[test]
 fn test_numbers_with_explicit_operators() {
     // v2: Use explicit operator triggers with number triggers
-    assert_eq!(transform("x equals sign number one plus sign number two"), "x = 1 + 2");
-    assert_eq!(transform("total equals sign number twenty three"), "total = 23");
+    assert_eq!(
+        transform("x equals sign number one plus sign number two"),
+        "x = 1 + 2"
+    );
+    assert_eq!(
+        transform("total equals sign number twenty three"),
+        "total = 23"
+    );
 }

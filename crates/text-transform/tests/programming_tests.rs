@@ -17,15 +17,24 @@ fn test_function_definitions() {
 #[test]
 fn test_snake_case_identifiers() {
     assert_eq!(transform("snake underscore case"), "snake_case");
-    assert_eq!(transform("my underscore var underscore name"), "my_var_name");
+    assert_eq!(
+        transform("my underscore var underscore name"),
+        "my_var_name"
+    );
     // v2: Use explicit triggers for "equals" and numbers
-    assert_eq!(transform("user underscore id equals sign number five"), "user_id = 5");
+    assert_eq!(
+        transform("user underscore id equals sign number five"),
+        "user_id = 5"
+    );
 }
 
 #[test]
 fn test_function_calls() {
     assert_eq!(transform("print open paren close paren"), "print()");
-    assert_eq!(transform("func open parenthesis close parenthesis"), "func()");
+    assert_eq!(
+        transform("func open parenthesis close parenthesis"),
+        "func()"
+    );
     assert_eq!(transform("call me open paren close paren"), "call me()");
 }
 
@@ -59,5 +68,8 @@ fn test_array_indexing_still_works() {
     // Ensure we didn't break array indexing with bracket fixes
     assert_eq!(transform("arr open bracket i close bracket"), "arr[i]");
     // v2: "zero" passes through - use "number zero" for digit
-    assert_eq!(transform("list open bracket number zero close bracket"), "list[0]");
+    assert_eq!(
+        transform("list open bracket number zero close bracket"),
+        "list[0]"
+    );
 }

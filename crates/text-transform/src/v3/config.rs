@@ -1,7 +1,7 @@
 //! Configuration for Text Transform v3
 
-use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
+use std::path::PathBuf;
 
 /// Transform mode for context-aware corrections
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -153,14 +153,15 @@ impl TransformConfig {
     /// Validate configuration
     pub fn validate(&self) -> crate::v3::Result<()> {
         if self.fuzzy_threshold < 0.0 || self.fuzzy_threshold > 1.0 {
-            return Err(crate::v3::TransformError::ConfigError(
-                format!("Invalid fuzzy_threshold: {} (must be 0.0-1.0)", self.fuzzy_threshold)
-            ));
+            return Err(crate::v3::TransformError::ConfigError(format!(
+                "Invalid fuzzy_threshold: {} (must be 0.0-1.0)",
+                self.fuzzy_threshold
+            )));
         }
 
         if self.fuzzy_cache_size == 0 {
             return Err(crate::v3::TransformError::ConfigError(
-                "fuzzy_cache_size must be > 0".to_string()
+                "fuzzy_cache_size must be > 0".to_string(),
             ));
         }
 

@@ -9,30 +9,26 @@
 //! The service implementation is designed to work with multiple storage backends
 //! while maintaining consistent query semantics and high performance.
 
+use crate::storage::table_manager::AggregationView;
 use crate::storage::StorageBackend;
 use arrow_flight::{
-    flight_service_server::FlightService,
-    Action, ActionType, Criteria, FlightData, FlightDescriptor, FlightInfo,
-    HandshakeRequest, HandshakeResponse, PutResult, SchemaResult, Ticket,
-    Empty, PollInfo,
+    flight_service_server::FlightService, Action, ActionType, Criteria, Empty, FlightData,
+    FlightDescriptor, FlightInfo, HandshakeRequest, HandshakeResponse, PollInfo, PutResult,
+    SchemaResult, Ticket,
 };
 use arrow_schema::Schema;
 use bytes::Bytes;
 use futures::Stream;
+use serde::Deserialize;
+use serde_json;
 use std::pin::Pin;
 use std::sync::Arc;
 use tonic::{Request, Response, Status, Streaming};
-use crate::storage::table_manager::AggregationView;
-use serde::Deserialize;
-use serde_json;
 
 /// Command types for table and view operations
 #[derive(Debug)]
 enum TableCommand {
-    CreateTable {
-        name: String,
-        schema: Arc<Schema>,
-    },
+    CreateTable { name: String, schema: Arc<Schema> },
     CreateAggregationView(AggregationView),
     DropTable(String),
     DropAggregationView(String),
@@ -51,33 +47,41 @@ impl TableCommand {
 
         match value.get("type").and_then(|t| t.as_str()) {
             Some("create_table") => {
-                let cmd: CreateTableCmd = serde_json::from_value(value["data"].clone())
-                    .map_err(|e| Status::invalid_argument(format!("Invalid create table command: {}", e)))?;
-                
+                let cmd: CreateTableCmd =
+                    serde_json::from_value(value["data"].clone()).map_err(|e| {
+                        Status::invalid_argument(format!("Invalid create table command: {}", e))
+                    })?;
+
                 // Convert schema bytes to Schema using Arrow IPC
-                let message = arrow_ipc::root_as_message(&cmd.schema_bytes[..])
-                    .map_err(|e| Status::invalid_argument(format!("Invalid schema bytes: {}", e)))?;
-                let schema = message.header_as_schema()
+                let message = arrow_ipc::root_as_message(&cmd.schema_bytes[..]).map_err(|e| {
+                    Status::invalid_argument(format!("Invalid schema bytes: {}", e))
+                })?;
+                let schema = message
+                    .header_as_schema()
                     .ok_or_else(|| Status::invalid_argument("Message is not a schema"))?;
                 let schema = arrow_ipc::convert::fb_to_schema(schema);
-                
+
                 Ok(TableCommand::CreateTable {
                     name: cmd.name,
                     schema: Arc::new(schema),
                 })
             }
             Some("create_aggregation_view") => {
-                let view: AggregationView = serde_json::from_value(value["data"].clone())
-                    .map_err(|e| Status::invalid_argument(format!("Invalid view command: {}", e)))?;
+                let view: AggregationView =
+                    serde_json::from_value(value["data"].clone()).map_err(|e| {
+                        Status::invalid_argument(format!("Invalid view command: {}", e))
+                    })?;
                 Ok(TableCommand::CreateAggregationView(view))
             }
             Some("drop_table") => {
-                let name = value["data"]["name"].as_str()
+                let name = value["data"]["name"]
+                    .as_str()
                     .ok_or_else(|| Status::invalid_argument("Missing table name"))?;
                 Ok(TableCommand::DropTable(name.to_string()))
             }
             Some("drop_aggregation_view") => {
-                let name = value["data"]["name"].as_str()
+                let name = value["data"]["name"]
+                    .as_str()
                     .ok_or_else(|| Status::invalid_argument("Missing view name"))?;
                 Ok(TableCommand::DropAggregationView(name.to_string()))
             }
@@ -98,13 +102,18 @@ impl FlightSqlService {
 
 #[tonic::async_trait]
 impl FlightService for FlightSqlService {
-    type HandshakeStream = Pin<Box<dyn Stream<Item = Result<HandshakeResponse, Status>> + Send + 'static>>;
-    type ListFlightsStream = Pin<Box<dyn Stream<Item = Result<FlightInfo, Status>> + Send + 'static>>;
+    type HandshakeStream =
+        Pin<Box<dyn Stream<Item = Result<HandshakeResponse, Status>> + Send + 'static>>;
+    type ListFlightsStream =
+        Pin<Box<dyn Stream<Item = Result<FlightInfo, Status>> + Send + 'static>>;
     type DoGetStream = Pin<Box<dyn Stream<Item = Result<FlightData, Status>> + Send + 'static>>;
     type DoPutStream = Pin<Box<dyn Stream<Item = Result<PutResult, Status>> + Send + 'static>>;
-    type DoActionStream = Pin<Box<dyn Stream<Item = Result<arrow_flight::Result, Status>> + Send + 'static>>;
-    type ListActionsStream = Pin<Box<dyn Stream<Item = Result<ActionType, Status>> + Send + 'static>>;
-    type DoExchangeStream = Pin<Box<dyn Stream<Item = Result<FlightData, Status>> + Send + 'static>>;
+    type DoActionStream =
+        Pin<Box<dyn Stream<Item = Result<arrow_flight::Result, Status>> + Send + 'static>>;
+    type ListActionsStream =
+        Pin<Box<dyn Stream<Item = Result<ActionType, Status>> + Send + 'static>>;
+    type DoExchangeStream =
+        Pin<Box<dyn Stream<Item = Result<FlightData, Status>> + Send + 'static>>;
 
     async fn get_schema(
         &self,

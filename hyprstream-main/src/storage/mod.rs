@@ -12,19 +12,19 @@
 // adbc_core v0.20 uses arrow v54.3, adbc_core v0.21 uses arrow v57
 // duckdb v1.4.2 uses arrow v56.2 - no compatible overlap exists
 // pub mod adbc;
-pub mod duckdb;
 pub mod cache;
+pub mod duckdb;
 pub mod table_manager;
 
+use crate::aggregation::{AggregateFunction, AggregateResult, GroupBy, TimeWindow};
 use crate::config::Credentials;
 use crate::metrics::MetricRecord;
-use crate::aggregation::{AggregateFunction, GroupBy, AggregateResult, TimeWindow};
-use crate::storage::table_manager::{TableManager, AggregationView};
+use crate::storage::table_manager::{AggregationView, TableManager};
+use arrow_array::RecordBatch;
+use arrow_schema::Schema;
 use async_trait::async_trait;
 use std::collections::HashMap;
 use tonic::Status;
-use arrow_schema::Schema;
-use arrow_array::RecordBatch;
 
 /// Batch-level aggregation state for efficient updates
 #[derive(Debug, Clone)]
@@ -100,7 +100,11 @@ pub trait StorageBackend: Send + Sync + 'static {
     async fn insert_into_table(&self, table_name: &str, batch: RecordBatch) -> Result<(), Status>;
 
     /// Query data from a table
-    async fn query_table(&self, table_name: &str, projection: Option<Vec<String>>) -> Result<RecordBatch, Status>;
+    async fn query_table(
+        &self,
+        table_name: &str,
+        projection: Option<Vec<String>>,
+    ) -> Result<RecordBatch, Status>;
 
     /// Create an aggregation view
     async fn create_aggregation_view(&self, view: &AggregationView) -> Result<(), Status>;
