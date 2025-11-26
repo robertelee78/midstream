@@ -11,6 +11,7 @@ use crate::v3::{FuzzyMatcher, Result, StaticRules, TransformConfig, TransformMod
 
 /// User override (highest priority corrections)
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct UserOverride {
     from: String,
     to: String,

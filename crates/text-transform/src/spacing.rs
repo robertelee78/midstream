@@ -3,6 +3,7 @@
 //! Determines when to add spaces before/after replacements based on context.
 
 #[derive(Debug, PartialEq)]
+#[allow(dead_code)]
 pub enum SpacingContext {
     /// Add space before the replacement
     NeedSpaceBefore,
@@ -14,6 +15,7 @@ pub enum SpacingContext {
 
 impl SpacingContext {
     /// Analyze the current result and replacement to determine spacing
+    #[allow(dead_code)]
     pub fn analyze(result: &str, replacement: &str) -> Self {
         if result.is_empty() {
             return Self::NoSpaceBefore;
