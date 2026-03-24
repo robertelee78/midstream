@@ -29,7 +29,7 @@ blake3.workspace = true
 regex = "1.10"
 aho-corasick = "1.1"
 fancy-regex = "0.13"
-lru = "0.12"
+lru = "0.16"
 
 [dev-dependencies]
 criterion.workspace = true
